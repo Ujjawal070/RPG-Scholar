@@ -3530,11 +3530,11 @@ const App={
             }catch(e){}
             const xpBonus=S.timer.mode==="focus-long"?80:30;
             const coinBonus=S.timer.mode==="focus-long"?25:10;
-            const{char:nc,msgs}=levelUpChar({...S.char,xp:S.char.xp+xpBonus,coins:S.char.coins+coinBonus});
+            let{char:nc,msgs}=levelUpChar({...S.char,xp:S.char.xp+xpBonus,coins:S.char.coins+coinBonus});
             // Hydration drain: -10 MP per session. If MP=0, -20 HP instead.
             let hydrationNote="";
-            if(S.char.mp>0){
-              const newMp=Math.max(0,S.char.mp-10);
+            if(nc.mp>0){
+              const newMp=Math.max(0,nc.mp-10);
               nc={...nc,mp:newMp};
               if(newMp===0)hydrationNote=" 💧 You're dehydrated! Drink water or HP will drain!";
               else hydrationNote=` 💧 MP: ${newMp}/${nc.maxMp}`;
@@ -3542,7 +3542,7 @@ const App={
               const newHp=Math.max(0,nc.hp-20);
               nc={...nc,hp:newHp};
               hydrationNote=" ⚠️ Dehydrated! -20 HP! DRINK WATER NOW!";
-              S.char=nc; if(newHp<=0)setTimeout(_checkZeroHp,200);
+              if(newHp<=0)setTimeout(_checkZeroHp,200);
             }
             S.char=nc;addLog([`⏱️ Focus session complete! +${xpBonus} XP +${coinBonus} 🏅`,...msgs]);
             if(msgs.length)showLevelUp();
