@@ -1744,7 +1744,7 @@ function levelUpChar(char){
   while(c.xp>=XPL(c.level)){
     c.xp-=XPL(c.level);c.level++;
     c.maxHp=100+(c.level-1)*10;c.hp=c.maxHp;
-    c.maxMp=50+(c.level-1)*5;c.mp=c.maxMp;
+    c.maxMp=50+(c.level-1)*5;c.mp=Math.min(c.mp,c.maxMp); // keep current MP, just cap to new max
     c.coins+=100;
     const sk=STAT_KEYS[c.level%STAT_KEYS.length];c.stats[sk]=(c.stats[sk]||0)+1;
     c.title=TITLES[Math.min(c.level-1,TITLES.length-1)];
@@ -3424,6 +3424,7 @@ const App={
     save();renderAll();
   },
   drinkWater(){
+    if(S.char.mp>=S.char.maxMp){notify("💧 Already fully hydrated!");Audio.click();return;}
     S.char={...S.char,mp:S.char.maxMp};
     save();renderSidebar();
     notify("💧 Hydrated! MP fully restored.");
@@ -3828,7 +3829,12 @@ function initApp(){
   // Streak + auto daily roll
   const today=todayStr();
   if(S.char.lastActiveDate!==today){
-    S.char={...S.char,lastActiveDate:today,streak:S.char.lastActiveDate===prevDay(today)?S.char.streak+1:1};
+    // Fix 3: first ever open → streak stays 0, subsequent days increment or reset
+    const isFirstOpen=!S.char.lastActiveDate;
+    const streak=isFirstOpen?0:(S.char.lastActiveDate===prevDay(today)?S.char.streak+1:0);
+    S.char={...S.char,lastActiveDate:today,streak};
+    // Fix 2: auto-reset completed dailies on new day before rolling new ones
+    S.quests=S.quests.map(q=>(q.type==="daily"||q.type==="habit")?{...q,done:false}:q);
     // Auto-roll daily quests on new day if last roll wasn't today
     if(S.lastDailyRoll!==today){
       const allQ=[...QUEST_DB,...(S.customQuests||[])];
@@ -3893,6 +3899,17 @@ function initApp(){
   checkDailyQuestHP(); // check on load
   try{if(Notification.permission==="default")Notification.requestPermission();}catch(e){}
   setInterval(checkDailyQuestHP, 3600000); // re-check every hour
+  // ── Midnight watcher: auto-reset dailies if app stays open overnight ──
+  setInterval(()=>{
+    const t=todayStr();
+    if(S.char.lastActiveDate!==t){
+      S.quests=S.quests.map(q=>(q.type==="daily"||q.type==="habit")?{...q,done:false}:q);
+      const streak=S.char.lastActiveDate===prevDay(t)?S.char.streak+1:0;
+      S.char={...S.char,lastActiveDate:t,streak};
+      save();renderAll();
+      notify("🌅 New day! Dailies reset.");
+    }
+  },60000); // check every minute
   // ── Floating Pomodoro drag (mouse + touch) ──
   (function(){
     const fp=document.getElementById("fp-widget");
