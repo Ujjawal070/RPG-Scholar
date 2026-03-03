@@ -862,8 +862,9 @@ body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;m
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
         <div>
-          <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">Date *</div>
-          <input type="date" class="inp" id="ev-date"/>
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">Date * <span style="color:var(--text-dim);font-weight:400">(DD/MM/YYYY)</span></div>
+          <input type="text" class="inp" id="ev-date-display" placeholder="DD/MM/YYYY" maxlength="10" oninput="App._evDateInput(this)" style="letter-spacing:1px;"/>
+          <input type="hidden" id="ev-date"/>
         </div>
         <div>
           <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">Category</div>
@@ -2262,68 +2263,41 @@ function renderCalendar(){
     document.getElementById("cal-week-grid").innerHTML=html;
   }
 
-  // Selected day events popup
+  // Selected day events panel (below calendar)
   const selWrap=document.getElementById("cal-selected-events");
-  selWrap.style.display="none"; // always hide the old panel
   if(S.calSelectedDay&&S.calView==="month"){
     const key=`${y}-${String(m+1).padStart(2,"0")}-${String(S.calSelectedDay).padStart(2,"0")}`;
     const rangeF=new Date(y,m,S.calSelectedDay),rangeT=new Date(y,m,S.calSelectedDay);
     const evs=_expandEvents(rangeF,rangeT).filter(e=>e.date===key).sort((a,b)=>a.time.localeCompare(b.time));
     if(evs.length>0){
-      // Remove old popup if exists
-      const old=document.getElementById("cal-day-popup");if(old)old.remove();
-      // Find the clicked day cell
-      const cells=document.querySelectorAll(".cal-day");
-      let targetCell=null;
-      cells.forEach(cell=>{
-        const num=cell.querySelector("div");
-        if(num&&parseInt(num.textContent)===S.calSelectedDay)targetCell=cell;
-      });
-      const popup=document.createElement("div");
-      popup.id="cal-day-popup";
-      popup.style.cssText="position:fixed;z-index:9999;background:#1a1728;border:1px solid var(--border-accent);border-radius:16px;padding:16px;width:280px;box-shadow:0 8px 32px rgba(0,0,0,0.6);animation:nguPop .2s cubic-bezier(0.34,1.56,0.64,1) both;max-height:70vh;overflow-y:auto;";
-      popup.innerHTML=`
+      selWrap.style.display="block";
+      selWrap.innerHTML=`
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
           <div style="font-weight:700;color:var(--accent);font-size:14px;">📅 ${_fmtDate(key)}</div>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <button onclick="App._resetEventForm();document.getElementById('ev-date').value='${key}';App.openModal('add-event-modal')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border-accent);background:rgba(255,255,255,0.06);color:var(--primary);cursor:pointer;font-weight:700;">+ Add</button>
-            <button onclick="document.getElementById('cal-day-popup').remove();App.calSelectDay(${S.calSelectedDay});" style="background:none;border:none;color:var(--text-dim);font-size:16px;cursor:pointer;line-height:1;">×</button>
-          </div>
+          <button onclick="App._resetEventForm();document.getElementById('ev-date').value='${key}';const _ddd=document.getElementById('ev-date-display');if(_ddd){const _p='${key}'.split('-');_ddd.value=_p[2]+'/'+_p[1]+'/'+_p[0];}App.openModal('add-event-modal')" style="font-size:11px;padding:4px 10px;border-radius:8px;border:1px solid var(--border-accent);background:rgba(255,255,255,0.06);color:var(--primary);cursor:pointer;font-weight:700;">+ Add Event</button>
         </div>
-        ${evs.map(e=>`<div style="display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);">
+        ${evs.map(e=>`<div style="display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);">
           <div style="width:4px;min-height:36px;border-radius:4px;background:${_evColor(e)};flex-shrink:0;margin-top:2px;"></div>
           <div style="flex:1;min-width:0;">
-            <div style="font-size:13px;font-weight:600;color:var(--text);">${e.title}</div>
+            <div style="font-size:13px;font-weight:600;">${e.title}</div>
             <div style="font-size:11px;color:var(--text-dim);">${e.time}${e.endTime?" – "+e.endTime:""} · ${e.cat}${e.repeat&&e.repeat!=="none"?" 🔁":""}</div>
             ${e.desc?`<div style="font-size:11px;color:var(--text-mid);margin-top:2px;">${e.desc}</div>`:""}
           </div>
-          <div style="display:flex;gap:4px;flex-shrink:0;">
-            <button onclick="document.getElementById('cal-day-popup').remove();App._editEvent(${e._origId||e.id})" style="padding:3px 6px;font-size:10px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,0.05);color:var(--text-mid);cursor:pointer;">✏️</button>
-            <button onclick="App.removeEvent(${e._origId||e.id})" style="padding:3px 6px;font-size:10px;border-radius:6px;border:1px solid rgba(248,113,113,0.3);background:rgba(248,113,113,0.1);color:#f87171;cursor:pointer;">✕</button>
+          <div style="display:flex;gap:5px;flex-shrink:0;">
+            <button onclick="App._editEvent(${e._origId||e.id})" style="padding:3px 8px;font-size:10px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,0.05);color:var(--text-mid);cursor:pointer;">✏️</button>
+            <button onclick="App.removeEvent(${e._origId||e.id})" style="padding:3px 8px;font-size:10px;border-radius:6px;border:1px solid rgba(248,113,113,0.3);background:rgba(248,113,113,0.1);color:#f87171;cursor:pointer;">✕</button>
           </div>
         </div>`).join("")}`;
-      document.body.appendChild(popup);
-      // Position near the cell
-      if(targetCell){
-        const rect=targetCell.getBoundingClientRect();
-        const pw=280,ph=Math.min(evs.length*70+60,window.innerHeight*0.7);
-        let left=rect.left+rect.width/2-pw/2;
-        let top=rect.bottom+8;
-        if(left+pw>window.innerWidth-8)left=window.innerWidth-pw-8;
-        if(left<8)left=8;
-        if(top+ph>window.innerHeight-8)top=rect.top-ph-8;
-        popup.style.left=left+"px";
-        popup.style.top=top+"px";
-      } else {
-        popup.style.left="50%";popup.style.top="50%";popup.style.transform="translate(-50%,-50%)";
-      }
-      // Close on outside click
-      setTimeout(()=>document.addEventListener("click",function _close(ev){
-        const p=document.getElementById("cal-day-popup");
-        if(p&&!p.contains(ev.target)&&!ev.target.closest(".cal-day")){p.remove();document.removeEventListener("click",_close);}
-      }),100);
+    } else {
+      selWrap.style.display="block";
+      selWrap.innerHTML=`
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+          <div style="font-weight:700;color:var(--accent);font-size:14px;">📅 ${_fmtDate(key)}</div>
+          <button onclick="App._resetEventForm();document.getElementById('ev-date').value='${key}';const _ddd=document.getElementById('ev-date-display');if(_ddd){const _p='${key}'.split('-');_ddd.value=_p[2]+'/'+_p[1]+'/'+_p[0];}App.openModal('add-event-modal')" style="font-size:11px;padding:4px 10px;border-radius:8px;border:1px solid var(--border-accent);background:rgba(255,255,255,0.06);color:var(--primary);cursor:pointer;font-weight:700;">+ Add Event</button>
+        </div>
+        <div style="color:var(--text-dim);font-size:13px;padding:10px 0;">No events. Add one!</div>`;
     }
-  }
+  } else selWrap.style.display="none";
 
   // Upcoming events (next 10 real events, no all recurring expansions for performance)
   const now=new Date();
@@ -2475,7 +2449,7 @@ function renderStats(){
   } else if(tab==="week"){
     const days=getOffsetDays(7);
     const start=days[0],end=days[days.length-1];
-    const fmt=d=>{const [y,mo,dy]=d.split("-");return`${dy}/${mo}`;};
+    const fmt=d=>{const [y,mo,dy]=d.split("-");return`${dy}/${mo}/${y}`;};
     periodLabel=`${fmt(start)} – ${fmt(end)}`;
     labels=days.map(d=>{const dt=new Date(d);return["Su","Mo","Tu","We","Th","Fr","Sa"][dt.getDay()];});
     values=days.map(d=>S.studyLog[d]||0);
@@ -3607,7 +3581,23 @@ const App={
     renderTimer();save();
   },
     calSelectDay(d){S.calSelectedDay=S.calSelectedDay===d?null:d;renderCalendar();},
-  calSetView(v){S.calView=v;renderCalendar();},
+  _evDateInput(el){
+    // Auto-format as user types: DD/MM/YYYY
+    let v=el.value.replace(/[^\d]/g,"");
+    if(v.length>2)v=v.slice(0,2)+"/"+v.slice(2);
+    if(v.length>5)v=v.slice(0,5)+"/"+v.slice(5);
+    el.value=v;
+    // Parse to YYYY-MM-DD for storage
+    const parts=v.split("/");
+    if(parts.length===3&&parts[2].length===4){
+      const iso=`${parts[2]}-${parts[1].padStart(2,"0")}-${parts[0].padStart(2,"0")}`;
+      document.getElementById("ev-date").value=iso;
+      el.style.borderColor=isNaN(new Date(iso).getTime())?"#f87171":"var(--border-accent)";
+    } else {
+      document.getElementById("ev-date").value="";
+      el.style.borderColor=v.length>0?"#f87171":"var(--border)";
+    }
+  },
   calGoToday(){S.calMonth=new Date();S.calSelectedDay=new Date().getDate();renderCalendar();},
   calPickColor(el){
     document.querySelectorAll(".ev-color-dot").forEach(d=>{d.style.border="3px solid transparent";d.style.boxShadow="none";});
@@ -3632,7 +3622,9 @@ const App={
     document.getElementById("ev-save-btn").textContent="Add Event";
     document.getElementById("ev-save-btn").onclick=()=>App.addEvent();
     const today=new Date();
-    document.getElementById("ev-date").value=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+    const _todayIso=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+    document.getElementById("ev-date").value=_todayIso;
+    const _dd=document.getElementById("ev-date-display");if(_dd){const p=_todayIso.split("-");_dd.value=p[2]+"/"+p[1]+"/"+p[0];}
   },
   _editEvent(id){
     const ev=S.events.find(e=>e.id===id);if(!ev)return;
@@ -3641,6 +3633,7 @@ const App={
     document.getElementById("ev-title").value=ev.title||"";
     document.getElementById("ev-desc").value=ev.desc||"";
     document.getElementById("ev-date").value=ev.date||"";
+    const _dd2=document.getElementById("ev-date-display");if(_dd2&&ev.date){const p=ev.date.split("-");_dd2.value=p[2]+"/"+p[1]+"/"+p[0];}
     document.getElementById("ev-time").value=ev.time||"09:00";
     document.getElementById("ev-end-time").value=ev.endTime||"10:00";
     document.getElementById("ev-cat").value=ev.cat||"study";
@@ -3857,6 +3850,7 @@ function initApp(){
   if(S.music)Audio.startMusic();
   // Set default event date
   document.getElementById("ev-date").value=today;
+  const _initDd=document.getElementById("ev-date-display");if(_initDd){const p=today.split("-");_initDd.value=p[2]+"/"+p[1]+"/"+p[0];}
   // Set up music button
   document.getElementById("music-btn").addEventListener("click",()=>{App.toggleSetting("music");});
   document.getElementById("reset-dailies-btn").addEventListener("click",()=>App.resetDailies());
