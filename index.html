@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <title>RPG Scholar ⚔️</title>
-  <!-- Google tag (gtag.js) -->
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-EMH0G8X8TT"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -299,7 +299,7 @@ body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;m
     <div class="glow-anim" style="font-size:22px">⚔️</div>
     <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
       <div style="color:var(--primary);font-weight:900;font-size:17px;letter-spacing:1px;white-space:nowrap">RPG Scholar</div>
-      <div id="dev-badge" onclick="_devBadgeBurst(event)" title="Developer of RPG Scholar"
+      <div id="dev-badge" onclick="_devAboutModal(event)" title="About RPG Scholar"
         style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px 3px 7px;
                border-radius:20px;border:1px solid var(--border-accent);
                background:linear-gradient(135deg,rgba(168,85,247,0.18),rgba(245,158,11,0.12));
@@ -480,22 +480,45 @@ body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;m
 
       <!-- CALENDAR -->
       <div class="view" id="view-calendar">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <!-- Header Row -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
           <div class="section-title" style="margin-bottom:0">📅 Calendar</div>
-          <button class="btn btn-primary" style="font-size:12px;padding:7px 14px" id="open-add-event">+ Event</button>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            <div style="display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+              <button id="cal-view-month" onclick="App.calSetView('month')" style="padding:5px 12px;font-size:11px;font-weight:700;border:none;cursor:pointer;background:var(--primary);color:var(--primary-text);transition:all .15s;">Month</button>
+              <button id="cal-view-week" onclick="App.calSetView('week')" style="padding:5px 12px;font-size:11px;font-weight:700;border:none;cursor:pointer;background:rgba(255,255,255,0.06);color:var(--text-mid);transition:all .15s;">Week</button>
+            </div>
+            <button class="btn btn-ghost" style="font-size:11px;padding:5px 12px" onclick="App.calGoToday()">Today</button>
+            <button class="btn btn-primary" style="font-size:12px;padding:7px 14px" id="open-add-event">+ Event</button>
+          </div>
         </div>
-        <div class="card" style="margin-bottom:12px">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+
+        <!-- Month/Week nav bar -->
+        <div class="card" style="margin-bottom:12px;padding:10px 14px;">
+          <div style="display:flex;align-items:center;gap:10px;">
             <button class="btn btn-ghost" style="padding:4px 10px" id="cal-prev">◀</button>
             <div id="cal-month-label" style="flex:1;text-align:center;font-weight:700;color:var(--primary);font-size:15px"></div>
             <button class="btn btn-ghost" style="padding:4px 10px" id="cal-next">▶</button>
           </div>
+        </div>
+
+        <!-- Month view -->
+        <div id="cal-month-wrap" class="card" style="margin-bottom:12px;">
           <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:8px" id="cal-headers"></div>
           <div id="cal-grid"></div>
         </div>
-        <div id="cal-selected-events" style="display:none" class="card" style="margin-bottom:12px;animation:popIn .2s ease"></div>
+
+        <!-- Week view -->
+        <div id="cal-week-wrap" class="card" style="margin-bottom:12px;display:none;overflow-x:auto;">
+          <div id="cal-week-grid"></div>
+        </div>
+
+        <!-- Selected day events panel -->
+        <div id="cal-selected-events" style="display:none;margin-bottom:12px" class="card"></div>
+
+        <!-- Upcoming events -->
         <div class="card">
-          <div style="font-weight:700;color:var(--accent);margin-bottom:10px;font-size:14px">📋 Upcoming</div>
+          <div style="font-weight:700;color:var(--accent);margin-bottom:10px;font-size:14px">📋 Upcoming Events</div>
           <div id="cal-upcoming"></div>
         </div>
       </div>
@@ -825,37 +848,79 @@ body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;m
 
 <!-- Add Event Modal -->
 <div class="modal-overlay" id="add-event-modal" style="display:none">
-  <div class="modal">
-    <div style="font-weight:700;color:var(--primary);font-size:18px;margin-bottom:16px">📅 New Event</div>
+  <div class="modal" style="max-width:460px">
+    <div style="font-weight:700;color:var(--primary);font-size:18px;margin-bottom:16px" id="ev-modal-title">📅 New Event</div>
+    <input type="hidden" id="ev-edit-id" value=""/>
     <div style="display:flex;flex-direction:column;gap:10px">
       <div>
-        <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">Title</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">Title *</div>
         <input class="inp" id="ev-title" placeholder="Event title"/>
       </div>
-      <div class="grid-2">
+      <div>
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">Description</div>
+        <textarea class="inp" id="ev-desc" placeholder="Notes, location, details..." rows="2" style="resize:vertical;font-family:inherit;font-size:13px;line-height:1.5;"></textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
         <div>
-          <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">Date</div>
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">Date *</div>
           <input type="date" class="inp" id="ev-date"/>
         </div>
         <div>
-          <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">Time</div>
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">Category</div>
+          <select class="sel" id="ev-cat">
+            <option value="study">📚 Study</option>
+            <option value="work">💼 Work</option>
+            <option value="personal">🌱 Personal</option>
+            <option value="health">❤️ Health</option>
+            <option value="social">👥 Social</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div>
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">Start Time</div>
           <input type="time" class="inp" id="ev-time" value="09:00"/>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">End Time</div>
+          <input type="time" class="inp" id="ev-end-time" value="10:00"/>
         </div>
       </div>
       <div>
-        <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">Category</div>
-        <select class="sel" id="ev-cat">
-          <option value="study">📚 Study</option>
-          <option value="work">💼 Work</option>
-          <option value="personal">🌱 Personal</option>
-          <option value="health">❤️ Health</option>
-          <option value="social">👥 Social</option>
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px">Event Color</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="display:flex;gap:6px;flex-wrap:wrap" id="ev-color-picker">
+            <div class="ev-color-dot" data-color="#f59e0b" onclick="App.calPickColor(this)" style="width:22px;height:22px;border-radius:50%;background:#f59e0b;cursor:pointer;border:3px solid white;box-shadow:0 0 0 2px #f59e0b;transition:all .15s;flex-shrink:0"></div>
+            <div class="ev-color-dot" data-color="#a78bfa" onclick="App.calPickColor(this)" style="width:22px;height:22px;border-radius:50%;background:#a78bfa;cursor:pointer;border:3px solid transparent;transition:all .15s;flex-shrink:0"></div>
+            <div class="ev-color-dot" data-color="#34d399" onclick="App.calPickColor(this)" style="width:22px;height:22px;border-radius:50%;background:#34d399;cursor:pointer;border:3px solid transparent;transition:all .15s;flex-shrink:0"></div>
+            <div class="ev-color-dot" data-color="#f472b6" onclick="App.calPickColor(this)" style="width:22px;height:22px;border-radius:50%;background:#f472b6;cursor:pointer;border:3px solid transparent;transition:all .15s;flex-shrink:0"></div>
+            <div class="ev-color-dot" data-color="#60a5fa" onclick="App.calPickColor(this)" style="width:22px;height:22px;border-radius:50%;background:#60a5fa;cursor:pointer;border:3px solid transparent;transition:all .15s;flex-shrink:0"></div>
+            <div class="ev-color-dot" data-color="#fb923c" onclick="App.calPickColor(this)" style="width:22px;height:22px;border-radius:50%;background:#fb923c;cursor:pointer;border:3px solid transparent;transition:all .15s;flex-shrink:0"></div>
+            <div class="ev-color-dot" data-color="#f87171" onclick="App.calPickColor(this)" style="width:22px;height:22px;border-radius:50%;background:#f87171;cursor:pointer;border:3px solid transparent;transition:all .15s;flex-shrink:0"></div>
+          </div>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;color:var(--text-dim)" title="Pick any color">
+            <div id="ev-custom-swatch" style="width:22px;height:22px;border-radius:50%;background:#f59e0b;border:2px solid rgba(255,255,255,0.3);overflow:hidden;flex-shrink:0;position:relative;">
+              <input type="color" id="ev-color-wheel" value="#f59e0b" oninput="App.calPickCustomColor(this.value)"
+                style="opacity:0;position:absolute;inset:0;width:140%;height:140%;top:-20%;left:-20%;cursor:pointer;border:none;padding:0;"/>
+            </div>
+            Custom
+          </label>
+        </div>
+        <input type="hidden" id="ev-color" value="#f59e0b"/>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">Repeat</div>
+        <select class="sel" id="ev-repeat">
+          <option value="none">Does not repeat</option>
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
         </select>
       </div>
     </div>
     <div style="display:flex;gap:8px;margin-top:16px">
-      <button class="btn btn-primary" style="flex:1" onclick="App.addEvent()">Add Event</button>
-      <button class="btn btn-ghost" onclick="App.closeModal('add-event-modal')">Cancel</button>
+      <button class="btn btn-primary" style="flex:1" id="ev-save-btn" onclick="App.addEvent()">Add Event</button>
+      <button class="btn btn-ghost" onclick="App.closeModal('add-event-modal');App._resetEventForm()">Cancel</button>
     </div>
   </div>
 </div>
@@ -1616,7 +1681,7 @@ const S={
   music:false,
   musicMode:"fantasy",
   musicVol:0.3,
-  timer:{active:false,elapsed:0,mode:"focus",sessions:0},
+  timer:{active:false,elapsed:0,mode:"focus",sessions:0,sessionsDate:""},
   studyLog:{},
   garden:{items:[]},
   statTab:"today",
@@ -1634,7 +1699,7 @@ const S={
   questFilter:"all",
   pickerCat:"all",
   calMonth:new Date(),
-  calSelectedDay:null,
+  calSelectedDay:null,calView:"month",
   timerInterval:null,
   notifTimeout:null,
   levelUpTimeout:null,
@@ -1788,7 +1853,7 @@ function _neverGiveUpPopup(){
 
 function save(){
   const key="rpg-scholar-data";
-  try{localStorage.setItem(key,JSON.stringify({char:S.char,quests:S.quests,events:S.events,log:S.log,theme:S.theme,sfx:S.sfx,music:S.music,musicMode:S.musicMode,musicVol:S.musicVol,timer:{...S.timer,active:false,loggedSec:S.timer.loggedSec||0},profilePic:S.profilePic,customQuests:S.customQuests,customLinks:S.customLinks,customSubjects:S.customSubjects,hiddenQuests:S.hiddenQuests,dailyPickCount:S.dailyPickCount,lastDailyRoll:S.lastDailyRoll,studyLog:S.studyLog||{},garden:{items:(S.garden||{}).items||[]},heatOffset:S.heatOffset||0,gardenCat:S.gardenCat||"nature",notes:S.notes||{folders:[],view:{level:"folders"}},stickers:S.stickers||[],lastDailyHpCheck:S.char.lastDailyHpCheck}));}catch(e){}
+  try{localStorage.setItem(key,JSON.stringify({char:S.char,quests:S.quests,events:S.events,log:S.log,theme:S.theme,sfx:S.sfx,music:S.music,musicMode:S.musicMode,musicVol:S.musicVol,timer:{...S.timer,active:false,loggedSec:S.timer.loggedSec||0},profilePic:S.profilePic,customQuests:S.customQuests,customLinks:S.customLinks,customSubjects:S.customSubjects,hiddenQuests:S.hiddenQuests,dailyPickCount:S.dailyPickCount,lastDailyRoll:S.lastDailyRoll,studyLog:S.studyLog||{},sessionsLog:S.sessionsLog||{},garden:{items:(S.garden||{}).items||[]},heatOffset:S.heatOffset||0,gardenCat:S.gardenCat||"nature",notes:S.notes||{folders:[],view:{level:"folders"}},stickers:S.stickers||[],lastDailyHpCheck:S.char.lastDailyHpCheck}));}catch(e){}
 }
 function load(){
   const key="rpg-scholar-data";
@@ -1804,7 +1869,7 @@ function load(){
     if(d.music!==undefined)S.music=d.music;
     if(d.musicMode)S.musicMode=d.musicMode;
     if(d.musicVol!==undefined)S.musicVol=d.musicVol;
-    if(d.timer)S.timer={...d.timer,active:false};
+    if(d.timer){S.timer={...d.timer,active:false};if(S.timer.sessionsDate!==todayStr()){S.timer.sessions=0;S.timer.sessionsDate=todayStr();}}
     if(d.profilePic)S.profilePic=d.profilePic;
     if(d.customQuests)S.customQuests=d.customQuests;
     if(d.customLinks)S.customLinks=d.customLinks;
@@ -1813,6 +1878,7 @@ function load(){
     if(d.dailyPickCount)S.dailyPickCount=d.dailyPickCount;
     if(d.lastDailyRoll)S.lastDailyRoll=d.lastDailyRoll;
     if(d.studyLog)S.studyLog=d.studyLog;
+    if(d.sessionsLog)S.sessionsLog=d.sessionsLog;
     if(d.garden)S.garden={items:d.garden.items||[]};
     if(d.heatOffset!==undefined)S.heatOffset=d.heatOffset;
     if(d.gardenCat)S.gardenCat=d.gardenCat;
@@ -2060,46 +2126,223 @@ function renderTimer(){
   // ── Stats panel ──
   const c=S.char,totalMin=c.totalStudyMin;
   const se2=document.getElementById("timer-stats");
+  const todayMins=Math.round((S.studyLog&&S.studyLog[todayStr()])||0);
+  const todayH=Math.floor(todayMins/60),todayM=todayMins%60;
+  const todayTimeStr=todayMins===0?"0m":todayH>0?`${todayH}h ${todayM}m`:`${todayM}m`;
+  const totalTimeStr=totalMin<60?`${totalMin}m`:`${Math.floor(totalMin/60)}h ${totalMin%60}m`;
+  const totalSessionsEver=(S.timer.totalSessionsEver||0);
   if(se2)se2.innerHTML=[
-    ["📚","Total Study",totalMin<60?`${totalMin}m`:`${Math.floor(totalMin/60)}h ${totalMin%60}m`],
-    ["🎯","Sessions",t.sessions],
+    ["⏱️","Today's Study",todayTimeStr],
+    ["🎯","Sessions Today",t.sessions],
+    ["📚","Total Study Time",totalTimeStr],
+    ["🏆","Total Sessions",totalSessionsEver],
     ["🔥","Streak",`${c.streak} days`],
     ["🏅","Coins",c.coins],
-  ].map(([ic,l,v])=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-mid)">${ic} ${l}</span><span style="color:var(--primary);font-weight:700">${v}</span></div>`).join("");
+  ].map(([ic,l,v])=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-mid)">${ic} ${l}</span><span style="color:var(--primary);font-weight:700">${v}</span></div>`).join("");
 }
+// ── Category colors ──
+const CAT_COLORS={study:"#60a5fa",work:"#a78bfa",personal:"#34d399",health:"#f87171",social:"#f472b6"};
+
+// ── Date formatter: DD/MM/YYYY ──
+function _fmtDate(dateStr){
+  if(!dateStr)return"";
+  const [y,m,d]=dateStr.split("-");
+  return `${d}/${m}/${y}`;
+}
+function _fmtDateShort(dateStr){
+  // DD/MM
+  if(!dateStr)return"";
+  const [y,m,d]=dateStr.split("-");
+  return `${d}/${m}`;
+}
+function _evColor(e){return e.color||CAT_COLORS[e.cat]||"#f59e0b";}
+function _evTextColor(e){return _isDark(_evColor(e))?"#fff":"#111";}
+
+// ── Expand recurring events into a flat list for a date range ──
+function _expandEvents(fromDate, toDate){
+  const result=[];
+  const allEvents=S.events||[];
+  allEvents.forEach(ev=>{
+    const base=new Date(ev.date+"T00:00:00");
+    const add=(d)=>{
+      if(d>=fromDate&&d<=toDate){
+        const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+        result.push({...ev,date:key,_origId:ev.id});
+      }
+    };
+    if(!ev.repeat||ev.repeat==="none"){add(base);return;}
+    let cur=new Date(base);
+    for(let i=0;i<366;i++){
+      if(cur>toDate)break;
+      add(new Date(cur));
+      if(ev.repeat==="daily")cur.setDate(cur.getDate()+1);
+      else if(ev.repeat==="weekly")cur.setDate(cur.getDate()+7);
+      else if(ev.repeat==="monthly")cur.setMonth(cur.getMonth()+1);
+      else break;
+    }
+  });
+  return result;
+}
+
 function renderCalendar(){
-  const cm=S.calMonth,y=cm.getFullYear(),m=cm.getMonth();
-  document.getElementById("cal-month-label").textContent=cm.toLocaleString("default",{month:"long",year:"numeric"});
-  const headers=document.getElementById("cal-headers");
-  headers.innerHTML=["S","M","T","W","T","F","S"].map(d=>`<div style="text-align:center;font-size:10px;color:var(--text-dim);padding:2px 0;font-weight:700">${d}</div>`).join("");
-  const firstDay=new Date(y,m,1).getDay();
-  const days=new Date(y,m+1,0).getDate();
-  const today=new Date();
-  const isTM=m===today.getMonth()&&y===today.getFullYear();
-  let cells=Array(firstDay).fill(null).map((_,i)=>`<div></div>`);
-  for(let d=1;d<=days;d++){
-    const isToday=isTM&&d===today.getDate();
-    const key=`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-    const hasEvts=S.events.some(e=>e.date===key);
-    const isSel=S.calSelectedDay===d;
-    cells.push(`<div class="cal-day" style="background:${isToday?`${THEMES[S.theme].primary}25`:isSel?`${THEMES[S.theme].accent}20`:hasEvts?`${THEMES[S.theme].mp}15`:"rgba(255,255,255,.02)"};border-color:${isToday?"var(--border-accent)":isSel?THEMES[S.theme].accent+"60":"transparent"};color:${isToday?"var(--primary)":"var(--text)"};font-weight:${isToday?700:400}" onclick="App.calSelectDay(${d})">${d}${hasEvts?`<div class="cal-dot"></div>`:""}</div>`);
+  if(!S.calView)S.calView="month";
+  // Update view toggle buttons
+  const mb=document.getElementById("cal-view-month"),wb=document.getElementById("cal-view-week");
+  if(mb&&wb){
+    const selStyle="background:var(--primary);color:var(--primary-text);";
+    const unselStyle="background:rgba(255,255,255,0.06);color:var(--text-mid);";
+    mb.style.cssText+=(S.calView==="month"?selStyle:unselStyle);
+    wb.style.cssText+=(S.calView==="week"?selStyle:unselStyle);
   }
-  document.getElementById("cal-grid").innerHTML=cells.join("");
-  // Selected day events
+  const mw=document.getElementById("cal-month-wrap"),ww=document.getElementById("cal-week-wrap");
+  if(mw)mw.style.display=S.calView==="month"?"block":"none";
+  if(ww)ww.style.display=S.calView==="week"?"block":"none";
+
+  const cm=S.calMonth,y=cm.getFullYear(),m=cm.getMonth();
+  const today=new Date();
+
+  if(S.calView==="month"){
+    // Month label
+    document.getElementById("cal-month-label").textContent=cm.toLocaleString("default",{month:"long",year:"numeric"});
+    // Headers
+    document.getElementById("cal-headers").innerHTML=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d=>`<div style="text-align:center;font-size:10px;color:var(--text-dim);padding:3px 0;font-weight:700">${d}</div>`).join("");
+    const firstDay=new Date(y,m,1).getDay();
+    const days=new Date(y,m+1,0).getDate();
+    const isTM=m===today.getMonth()&&y===today.getFullYear();
+    const rangeFrom=new Date(y,m,1);
+    const rangeTo=new Date(y,m,days);
+    const expanded=_expandEvents(rangeFrom,rangeTo);
+    let cells=Array(firstDay).fill(null).map(()=>`<div style="min-height:64px"></div>`);
+    for(let d=1;d<=days;d++){
+      const isToday=isTM&&d===today.getDate();
+      const key=`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+      const dayEvts=expanded.filter(e=>e.date===key).sort((a,b)=>a.time.localeCompare(b.time));
+      const isSel=S.calSelectedDay===d;
+      const evPills=dayEvts.slice(0,2).map(e=>`<div style="background:${_evColor(e)};color:${_evTextColor(e)};font-size:9px;border-radius:3px;padding:1px 4px;margin-top:2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;cursor:pointer" title="${e.title}">${e.title}</div>`).join("");
+      const moreLabel=dayEvts.length>2?`<div style="font-size:9px;color:var(--primary);margin-top:2px;font-weight:700;background:rgba(255,255,255,0.07);border-radius:4px;padding:1px 4px;cursor:pointer;">+${dayEvts.length-2} more</div>`:"";
+      cells.push(`<div class="cal-day" style="min-height:64px;align-items:flex-start;padding:4px 5px;background:${isToday?`${THEMES[S.theme].primary}25`:isSel?`${THEMES[S.theme].accent}20`:"rgba(255,255,255,.02)"};border-color:${isToday?"var(--border-accent)":isSel?THEMES[S.theme].accent+"60":"transparent"};color:${isToday?"var(--primary)":"var(--text)"};font-weight:${isToday?700:400}" onclick="App.calSelectDay(${d})"><div style="font-size:12px;${isToday?"background:var(--primary);color:var(--primary-text);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-weight:700;":""}margin-bottom:1px">${d}</div>${evPills}${moreLabel}</div>`);
+    }
+    document.getElementById("cal-grid").innerHTML=cells.join("");
+
+  } else {
+    // Week view
+    const startOfWeek=new Date(cm);
+    const dow=startOfWeek.getDay();
+    startOfWeek.setDate(startOfWeek.getDate()-dow);
+    const endOfWeek=new Date(startOfWeek);
+    endOfWeek.setDate(endOfWeek.getDate()+6);
+    const weekDays=[];
+    for(let i=0;i<7;i++){const d=new Date(startOfWeek);d.setDate(d.getDate()+i);weekDays.push(d);}
+    const _swStr=`${startOfWeek.getFullYear()}-${String(startOfWeek.getMonth()+1).padStart(2,"0")}-${String(startOfWeek.getDate()).padStart(2,"0")}`;const _ewStr=`${endOfWeek.getFullYear()}-${String(endOfWeek.getMonth()+1).padStart(2,"0")}-${String(endOfWeek.getDate()).padStart(2,"0")}`;const label=`${_fmtDate(_swStr)} – ${_fmtDate(_ewStr)}`;
+    document.getElementById("cal-month-label").textContent=label;
+    const expanded=_expandEvents(startOfWeek,endOfWeek);
+    const hours=Array.from({length:24},(_,i)=>i);
+    let html=`<div style="display:grid;grid-template-columns:48px repeat(7,1fr);min-width:480px;">`;
+    // Column headers
+    html+=`<div style="padding:4px;border-bottom:1px solid var(--border);"></div>`;
+    weekDays.forEach(d=>{
+      const isT=d.toDateString()===today.toDateString();
+      html+=`<div style="text-align:center;padding:6px 2px;border-bottom:1px solid var(--border);border-left:1px solid var(--border);font-size:11px;${isT?"color:var(--primary);font-weight:700":"color:var(--text-dim)"}">
+        <div>${["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][d.getDay()]}</div>
+        <div style="font-size:16px;font-weight:900;${isT?"background:var(--primary);color:var(--primary-text);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;margin:2px auto 0":"margin-top:2px"}">${d.getDate()}</div>
+      </div>`;
+    });
+    // Hour rows
+    hours.forEach(h=>{
+      const hLabel=h===0?"12a":h<12?`${h}a`:h===12?"12p":`${h-12}p`;
+      html+=`<div style="padding:2px 4px;font-size:9px;color:var(--text-dim);text-align:right;border-top:1px solid rgba(255,255,255,0.04);height:48px;line-height:14px;padding-top:2px;">${hLabel}</div>`;
+      weekDays.forEach(d=>{
+        const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+        const slot=expanded.filter(e=>e.date===key&&parseInt(e.time.split(":")[0])===h);
+        const pills=slot.map(e=>`<div onclick="App._showEventDetail(${e._origId||e.id})" style="background:${_evColor(e)};color:${_evTextColor(e)};font-size:9px;border-radius:4px;padding:2px 5px;margin:1px 0;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;line-height:1.4">${e.time.slice(0,5)} ${e.title}</div>`).join("");
+        html+=`<div style="border-left:1px solid var(--border);border-top:1px solid rgba(255,255,255,0.04);height:48px;padding:1px 2px;overflow:hidden;position:relative;">${pills}</div>`;
+      });
+    });
+    html+=`</div>`;
+    document.getElementById("cal-week-grid").innerHTML=html;
+  }
+
+  // Selected day events popup
   const selWrap=document.getElementById("cal-selected-events");
-  if(S.calSelectedDay){
+  selWrap.style.display="none"; // always hide the old panel
+  if(S.calSelectedDay&&S.calView==="month"){
     const key=`${y}-${String(m+1).padStart(2,"0")}-${String(S.calSelectedDay).padStart(2,"0")}`;
-    const evs=S.events.filter(e=>e.date===key);
+    const rangeF=new Date(y,m,S.calSelectedDay),rangeT=new Date(y,m,S.calSelectedDay);
+    const evs=_expandEvents(rangeF,rangeT).filter(e=>e.date===key).sort((a,b)=>a.time.localeCompare(b.time));
     if(evs.length>0){
-      const monthName=cm.toLocaleString("default",{month:"long"});
-      selWrap.style.display="block";
-      selWrap.style.marginBottom="12px";
-      selWrap.innerHTML=`<div style="font-weight:700;color:var(--accent);margin-bottom:8px;font-size:14px">Events on ${monthName} ${S.calSelectedDay}</div>`+evs.map(e=>`<div style="display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)"><span>${e.time}</span><span style="flex:1;font-size:13px">${e.title}</span><span style="font-size:11px;color:var(--text-dim)">${e.cat}</span><button class="btn btn-danger" style="padding:2px 6px;font-size:10px" onclick="App.removeEvent(${e.id})">✕</button></div>`).join("");
-    }else selWrap.style.display="none";
-  }else selWrap.style.display="none";
-  // Upcoming
-  const sorted=[...S.events].sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time)).slice(0,8);
-  document.getElementById("cal-upcoming").innerHTML=sorted.length===0?`<div style="color:var(--text-dim);font-size:13px;text-align:center;padding:16px">No events yet.</div>`:sorted.map(e=>`<div style="display:flex;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)"><span style="font-size:11px;color:var(--text-dim);min-width:72px">${e.date}</span><span style="font-size:11px;color:var(--text-mid);min-width:40px">${e.time}</span><span style="flex:1;font-size:13px">${e.title}</span><button class="btn btn-danger" style="padding:2px 6px;font-size:10px" onclick="App.removeEvent(${e.id})">✕</button></div>`).join("");
+      // Remove old popup if exists
+      const old=document.getElementById("cal-day-popup");if(old)old.remove();
+      // Find the clicked day cell
+      const cells=document.querySelectorAll(".cal-day");
+      let targetCell=null;
+      cells.forEach(cell=>{
+        const num=cell.querySelector("div");
+        if(num&&parseInt(num.textContent)===S.calSelectedDay)targetCell=cell;
+      });
+      const popup=document.createElement("div");
+      popup.id="cal-day-popup";
+      popup.style.cssText="position:fixed;z-index:9999;background:#1a1728;border:1px solid var(--border-accent);border-radius:16px;padding:16px;width:280px;box-shadow:0 8px 32px rgba(0,0,0,0.6);animation:nguPop .2s cubic-bezier(0.34,1.56,0.64,1) both;max-height:70vh;overflow-y:auto;";
+      popup.innerHTML=`
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="font-weight:700;color:var(--accent);font-size:14px;">📅 ${_fmtDate(key)}</div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <button onclick="App._resetEventForm();document.getElementById('ev-date').value='${key}';App.openModal('add-event-modal')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border-accent);background:rgba(255,255,255,0.06);color:var(--primary);cursor:pointer;font-weight:700;">+ Add</button>
+            <button onclick="document.getElementById('cal-day-popup').remove();App.calSelectDay(${S.calSelectedDay});" style="background:none;border:none;color:var(--text-dim);font-size:16px;cursor:pointer;line-height:1;">×</button>
+          </div>
+        </div>
+        ${evs.map(e=>`<div style="display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);">
+          <div style="width:4px;min-height:36px;border-radius:4px;background:${_evColor(e)};flex-shrink:0;margin-top:2px;"></div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;font-weight:600;color:var(--text);">${e.title}</div>
+            <div style="font-size:11px;color:var(--text-dim);">${e.time}${e.endTime?" – "+e.endTime:""} · ${e.cat}${e.repeat&&e.repeat!=="none"?" 🔁":""}</div>
+            ${e.desc?`<div style="font-size:11px;color:var(--text-mid);margin-top:2px;">${e.desc}</div>`:""}
+          </div>
+          <div style="display:flex;gap:4px;flex-shrink:0;">
+            <button onclick="document.getElementById('cal-day-popup').remove();App._editEvent(${e._origId||e.id})" style="padding:3px 6px;font-size:10px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,0.05);color:var(--text-mid);cursor:pointer;">✏️</button>
+            <button onclick="App.removeEvent(${e._origId||e.id})" style="padding:3px 6px;font-size:10px;border-radius:6px;border:1px solid rgba(248,113,113,0.3);background:rgba(248,113,113,0.1);color:#f87171;cursor:pointer;">✕</button>
+          </div>
+        </div>`).join("")}`;
+      document.body.appendChild(popup);
+      // Position near the cell
+      if(targetCell){
+        const rect=targetCell.getBoundingClientRect();
+        const pw=280,ph=Math.min(evs.length*70+60,window.innerHeight*0.7);
+        let left=rect.left+rect.width/2-pw/2;
+        let top=rect.bottom+8;
+        if(left+pw>window.innerWidth-8)left=window.innerWidth-pw-8;
+        if(left<8)left=8;
+        if(top+ph>window.innerHeight-8)top=rect.top-ph-8;
+        popup.style.left=left+"px";
+        popup.style.top=top+"px";
+      } else {
+        popup.style.left="50%";popup.style.top="50%";popup.style.transform="translate(-50%,-50%)";
+      }
+      // Close on outside click
+      setTimeout(()=>document.addEventListener("click",function _close(ev){
+        const p=document.getElementById("cal-day-popup");
+        if(p&&!p.contains(ev.target)&&!ev.target.closest(".cal-day")){p.remove();document.removeEventListener("click",_close);}
+      }),100);
+    }
+  }
+
+  // Upcoming events (next 10 real events, no all recurring expansions for performance)
+  const now=new Date();
+  const nowStr=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+  const upcomingRange=new Date(now);upcomingRange.setMonth(upcomingRange.getMonth()+3);
+  const upcoming=_expandEvents(now,upcomingRange)
+    .filter(e=>e.date>=nowStr)
+    .sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time))
+    .slice(0,10);
+  document.getElementById("cal-upcoming").innerHTML=upcoming.length===0
+    ?`<div style="color:var(--text-dim);font-size:13px;text-align:center;padding:16px">No upcoming events.</div>`
+    :upcoming.map(e=>`<div style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+        <div style="width:4px;height:32px;border-radius:4px;background:${_evColor(e)};flex-shrink:0;"></div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:600">${e.title}${e.repeat&&e.repeat!=="none"?" 🔁":""}</div>
+          <div style="font-size:11px;color:var(--text-dim)">${_fmtDate(e.date)} · ${e.time}${e.endTime?" – "+e.endTime:""}${e.desc?" · "+e.desc.substring(0,30)+(e.desc.length>30?"...":""):""}</div>
+        </div>
+        <button onclick="App.removeEvent(${e._origId||e.id})" style="padding:2px 8px;font-size:10px;border-radius:6px;border:1px solid rgba(248,113,113,0.3);background:rgba(248,113,113,0.1);color:#f87171;cursor:pointer;flex-shrink:0;">✕</button>
+      </div>`).join("");
 }
 function renderSkills(){
   const c=S.char;
@@ -2232,7 +2475,7 @@ function renderStats(){
   } else if(tab==="week"){
     const days=getOffsetDays(7);
     const start=days[0],end=days[days.length-1];
-    const fmt=d=>{const dt=new Date(d);return`${dt.getMonth()+1}/${dt.getDate()}`;};
+    const fmt=d=>{const [y,mo,dy]=d.split("-");return`${dy}/${mo}`;};
     periodLabel=`${fmt(start)} – ${fmt(end)}`;
     labels=days.map(d=>{const dt=new Date(d);return["Su","Mo","Tu","We","Th","Fr","Sa"][dt.getDay()];});
     values=days.map(d=>S.studyLog[d]||0);
@@ -2273,7 +2516,25 @@ function renderStats(){
 
   // Summary cards
   const streak=S.char.streak||0;
-  const sessions=S.timer.sessions||0;
+  const sl=S.sessionsLog||{};
+  let sessions=0;
+  if(tab==="today"){
+    sessions=sl[todayKey]||0;
+  } else if(tab==="week"){
+    const days=getOffsetDays(7);
+    sessions=days.reduce((sum,d)=>sum+(sl[d]||0),0);
+  } else if(tab==="month"){
+    const anchor=new Date(today.getFullYear(),today.getMonth()+(S.statOffset||0),1);
+    const daysInMonth=new Date(anchor.getFullYear(),anchor.getMonth()+1,0).getDate();
+    for(let i=1;i<=daysInMonth;i++){
+      const d=new Date(anchor.getFullYear(),anchor.getMonth(),i).toISOString().slice(0,10);
+      sessions+=sl[d]||0;
+    }
+  } else {
+    const year=today.getFullYear()+(S.statOffset||0);
+    Object.keys(sl).forEach(k=>{if(k.startsWith(`${year}`))sessions+=sl[k]||0;});
+  }
+  const totalSessions=S.timer.totalSessionsEver||0;
   const summEl=document.getElementById("stat-summary");
   if(summEl){
     const hrs=Math.floor(Math.round(totalMins)/60),mins=Math.round(totalMins)%60;
@@ -2303,7 +2564,7 @@ function renderStats(){
       <div class="card" style="text-align:center;padding:14px 10px;background:${T.hp}20;border:1px solid ${T.hp}40">
         <div style="font-size:22px">🎯</div>
         <div style="font-size:20px;font-weight:900;color:var(--hp);margin:4px 0">${sessions}</div>
-        <div style="font-size:10px;color:var(--text-dim);letter-spacing:0.5px">SESSIONS</div>
+        <div style="font-size:10px;color:var(--text-dim);letter-spacing:0.5px">SESSIONS ${tab==="today"?"TODAY":tab==="week"?"THIS WEEK":tab==="month"?"THIS MONTH":"THIS YEAR"}</div>
       </div>
       <div class="card" style="text-align:center;padding:14px 10px;background:${T.mp}20;border:1px solid ${T.mp}40">
         <div style="font-size:22px">🌍</div>
@@ -3275,7 +3536,24 @@ const App={
               const k=todayStr();if(!S.studyLog)S.studyLog={};
               S.studyLog[k]=Math.round(((S.studyLog[k]||0)+(unlogged/60))*100)/100;
             }
-            Audio.timerEnd();
+            // ── Ring alarm: safe wrapper + loud multi-tone + browser notification ──
+            try{Audio.timerEnd();}catch(e){}
+            try{
+              const _ac=new(window.AudioContext||window.webkitAudioContext)();
+              [[880,0],[1046,.25],[880,.5],[1046,.75],[1318,1],[880,1.25],[1046,1.5]].forEach(([freq,t])=>{
+                const osc=_ac.createOscillator(),gain=_ac.createGain();
+                osc.type="sine";osc.frequency.value=freq;
+                gain.gain.setValueAtTime(0,_ac.currentTime+t);
+                gain.gain.linearRampToValueAtTime(0.35,_ac.currentTime+t+0.04);
+                gain.gain.exponentialRampToValueAtTime(0.001,_ac.currentTime+t+0.35);
+                osc.connect(gain);gain.connect(_ac.destination);
+                osc.start(_ac.currentTime+t);osc.stop(_ac.currentTime+t+0.38);
+              });
+            }catch(e){}
+            try{
+              if(Notification.permission==="granted")new Notification("RPG Scholar",{body:"⏱️ Focus session complete! Time for a break.",icon:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>"});
+              else if(Notification.permission!=="denied")Notification.requestPermission();
+            }catch(e){}
             const xpBonus=S.timer.mode==="focus-long"?80:30;
             const coinBonus=S.timer.mode==="focus-long"?25:10;
             const{char:nc,msgs}=levelUpChar({...S.char,xp:S.char.xp+xpBonus,coins:S.char.coins+coinBonus});
@@ -3297,7 +3575,8 @@ const App={
             notify(`🏆 Session complete! +${xpBonus} XP${hydrationNote}`);
             if(!S.garden)S.garden={items:[]};
             const nextMode=S.timer.mode==="focus-long"?"break-long":"break";
-            S.timer={...S.timer,active:false,elapsed:0,loggedSec:0,sessions:S.timer.sessions+1,mode:nextMode};
+            const _td=todayStr();const _ps=S.timer.sessionsDate===_td?S.timer.sessions:0;S.timer={...S.timer,active:false,elapsed:0,loggedSec:0,sessions:_ps+1,sessionsDate:_td,totalSessionsEver:(S.timer.totalSessionsEver||0)+1,mode:nextMode};
+            if(!S.sessionsLog)S.sessionsLog={};S.sessionsLog[_td]=(S.sessionsLog[_td]||0)+1;
           }else{
             notify("😴 Break over! Ready to focus?");
             const nextMode=S.timer.mode==="break-long"?"focus-long":"focus";
@@ -3328,24 +3607,96 @@ const App={
     renderTimer();save();
   },
     calSelectDay(d){S.calSelectedDay=S.calSelectedDay===d?null:d;renderCalendar();},
-  addEvent(){
+  calSetView(v){S.calView=v;renderCalendar();},
+  calGoToday(){S.calMonth=new Date();S.calSelectedDay=new Date().getDate();renderCalendar();},
+  calPickColor(el){
+    document.querySelectorAll(".ev-color-dot").forEach(d=>{d.style.border="3px solid transparent";d.style.boxShadow="none";});
+    el.style.border="3px solid white";el.style.boxShadow=`0 0 0 2px ${el.dataset.color}`;
+    document.getElementById("ev-color").value=el.dataset.color;
+    const sw=document.getElementById("ev-custom-swatch");if(sw)sw.style.border="2px solid rgba(255,255,255,0.3)";
+    const cw=document.getElementById("ev-color-wheel");if(cw)cw.value=el.dataset.color;
+  },
+  calPickCustomColor(val){
+    document.getElementById("ev-color").value=val;
+    const sw=document.getElementById("ev-custom-swatch");if(sw){sw.style.background=val;sw.style.border="2px solid white";}
+    document.querySelectorAll(".ev-color-dot").forEach(d=>{d.style.border="3px solid transparent";d.style.boxShadow="none";});
+  },
+  _resetEventForm(){
+    const f=["ev-title","ev-desc","ev-date","ev-time","ev-end-time","ev-edit-id"];
+    f.forEach(id=>{const el=document.getElementById(id);if(el)el.value=id==="ev-time"?"09:00":id==="ev-end-time"?"10:00":"";});
+    document.getElementById("ev-cat").value="study";
+    document.getElementById("ev-repeat").value="none";
+    document.getElementById("ev-color").value="#f59e0b";const _sw=document.getElementById("ev-custom-swatch");if(_sw){_sw.style.background="#f59e0b";_sw.style.border="2px solid rgba(255,255,255,0.3)";}const _cw=document.getElementById("ev-color-wheel");if(_cw)_cw.value="#f59e0b";
+    document.querySelectorAll(".ev-color-dot").forEach((d,i)=>{d.style.border=i===0?"3px solid white":"3px solid transparent";d.style.boxShadow=i===0?"0 0 0 2px #f59e0b":"none";});
+    document.getElementById("ev-modal-title").textContent="📅 New Event";
+    document.getElementById("ev-save-btn").textContent="Add Event";
+    document.getElementById("ev-save-btn").onclick=()=>App.addEvent();
+    const today=new Date();
+    document.getElementById("ev-date").value=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+  },
+  _editEvent(id){
+    const ev=S.events.find(e=>e.id===id);if(!ev)return;
+    App._resetEventForm();
+    document.getElementById("ev-edit-id").value=id;
+    document.getElementById("ev-title").value=ev.title||"";
+    document.getElementById("ev-desc").value=ev.desc||"";
+    document.getElementById("ev-date").value=ev.date||"";
+    document.getElementById("ev-time").value=ev.time||"09:00";
+    document.getElementById("ev-end-time").value=ev.endTime||"10:00";
+    document.getElementById("ev-cat").value=ev.cat||"study";
+    document.getElementById("ev-repeat").value=ev.repeat||"none";
+    const _ec=ev.color||"#f59e0b";document.getElementById("ev-color").value=_ec;const _sw2=document.getElementById("ev-custom-swatch");if(_sw2){_sw2.style.background=_ec;_sw2.style.border="2px solid rgba(255,255,255,0.3)";}const _cw2=document.getElementById("ev-color-wheel");if(_cw2)_cw2.value=_ec;
+    document.querySelectorAll(".ev-color-dot").forEach(d=>{
+      const active=d.dataset.color===(ev.color||"#f59e0b");
+      d.style.border=active?"3px solid white":"3px solid transparent";
+      d.style.boxShadow=active?`0 0 0 2px ${d.dataset.color}`:"none";
+    });
+    document.getElementById("ev-modal-title").textContent="✏️ Edit Event";
+    document.getElementById("ev-save-btn").textContent="Save Changes";
+    document.getElementById("ev-save-btn").onclick=()=>App._updateEvent();
+    App.openModal("add-event-modal");
+  },
+  _updateEvent(){
+    const id=parseInt(document.getElementById("ev-edit-id").value);
     const title=document.getElementById("ev-title").value.trim();
     if(!title)return;
-    const ev={id:Date.now(),title,date:document.getElementById("ev-date").value,time:document.getElementById("ev-time").value,cat:document.getElementById("ev-cat").value};
-    S.events=[...S.events,ev];App.closeModal("add-event-modal");
+    S.events=S.events.map(e=>e.id===id?{...e,title,desc:document.getElementById("ev-desc").value.trim(),date:document.getElementById("ev-date").value,time:document.getElementById("ev-time").value,endTime:document.getElementById("ev-end-time").value,cat:document.getElementById("ev-cat").value,repeat:document.getElementById("ev-repeat").value,color:document.getElementById("ev-color").value}:e);
+    App.closeModal("add-event-modal");App._resetEventForm();
+    notify("✅ Event updated!");Audio.click();save();renderCalendar();
+  },
+  _showEventDetail(id){
+    const ev=S.events.find(e=>e.id===id);if(!ev)return;
+    const old=document.getElementById("ev-detail-popup");if(old)old.remove();
+    const popup=document.createElement("div");
+    popup.id="ev-detail-popup";
+    popup.style.cssText="position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);padding:16px;animation:nguFadeIn .2s ease;";
+    popup.onclick=function(e){if(e.target===popup)popup.remove();};
+    popup.innerHTML=`<div style="background:#1a1728;border:1px solid ${_evColor(ev)};border-radius:20px;padding:24px;max-width:360px;width:100%;box-shadow:0 0 30px ${_evColor(ev)}40;animation:nguPop .3s cubic-bezier(0.34,1.56,0.64,1) both;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        <div style="width:10px;height:10px;border-radius:50%;background:${_evColor(ev)};flex-shrink:0;box-shadow:0 0 8px ${_evColor(ev)};"></div>
+        <div style="font-size:16px;font-weight:700;flex:1;">${ev.title}</div>
+        <button onclick="document.getElementById('ev-detail-popup').remove()" style="background:none;border:none;color:var(--text-dim);font-size:16px;cursor:pointer;">&times;</button>
+      </div>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:6px;">📅 ${_fmtDate(ev.date)} · ${ev.time}${ev.endTime?" – "+ev.endTime:""}</div>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:${ev.desc?"10px":"0"}">🏷️ ${ev.cat}${ev.repeat&&ev.repeat!=="none"?" · 🔁 "+ev.repeat:""}</div>
+      ${ev.desc?`<div style="font-size:13px;color:var(--text-mid);background:rgba(255,255,255,0.04);border-radius:8px;padding:8px 10px;margin-bottom:10px;">${ev.desc}</div>`:""}
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button onclick="document.getElementById('ev-detail-popup').remove();App._editEvent(${ev.id})" style="flex:1;padding:8px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,0.05);color:var(--text);cursor:pointer;font-size:12px;font-weight:600;">✏️ Edit</button>
+        <button onclick="document.getElementById('ev-detail-popup').remove();App.removeEvent(${ev.id})" style="flex:1;padding:8px;border-radius:10px;border:1px solid rgba(248,113,113,0.3);background:rgba(248,113,113,0.1);color:#f87171;cursor:pointer;font-size:12px;font-weight:600;">🗑️ Delete</button>
+      </div>
+    </div>`;
+    document.body.appendChild(popup);
+  },
+  addEvent(){
+    const title=document.getElementById("ev-title").value.trim();
+    if(!title){notify("⚠️ Please enter a title.");return;}
+    const editId=document.getElementById("ev-edit-id").value;
+    if(editId){App._updateEvent();return;}
+    const ev={id:Date.now(),title,desc:document.getElementById("ev-desc").value.trim(),date:document.getElementById("ev-date").value,time:document.getElementById("ev-time").value,endTime:document.getElementById("ev-end-time").value,cat:document.getElementById("ev-cat").value,repeat:document.getElementById("ev-repeat").value,color:document.getElementById("ev-color").value};
+    S.events=[...S.events,ev];App.closeModal("add-event-modal");App._resetEventForm();
     notify("📅 Event added!");Audio.click();save();renderCalendar();
-    if(S.view==="dashboard")renderDashboard();
   },
   removeEvent(id){S.events=S.events.filter(e=>e.id!==id);save();renderCalendar();if(S.view==="dashboard")renderDashboard();},
-  setAvatar(av){S.char={...S.char,avatar:av};Audio.click();save();renderSkills();renderSidebar();renderHeader();if(S.view==="dashboard")renderDashboard();},
-  setImgAvatar(id){
-    const av=IMG_AVATARS.find(a=>a.id===id);if(!av)return;
-    S.profilePic=av.src;
-    S.char={...S.char,avatar:id};
-    Audio.click();save();renderSkills();renderSidebar();renderHeader();
-    if(S.view==="dashboard")renderDashboard();
-    notify(av.label+" selected!");
-  },
   handleProfilePic(input){
     const file=input.files[0];if(!file)return;
     const reader=new FileReader();
@@ -3510,9 +3861,9 @@ function initApp(){
   document.getElementById("music-btn").addEventListener("click",()=>{App.toggleSetting("music");});
   document.getElementById("reset-dailies-btn").addEventListener("click",()=>App.resetDailies());
   document.getElementById("open-quest-picker").addEventListener("click",()=>App.openModal("quest-picker-modal"));
-  document.getElementById("open-add-event").addEventListener("click",()=>App.openModal("add-event-modal"));
-  document.getElementById("cal-prev").addEventListener("click",()=>{const n=new Date(S.calMonth);n.setMonth(n.getMonth()-1);S.calMonth=n;S.calSelectedDay=null;renderCalendar();});
-  document.getElementById("cal-next").addEventListener("click",()=>{const n=new Date(S.calMonth);n.setMonth(n.getMonth()+1);S.calMonth=n;S.calSelectedDay=null;renderCalendar();});
+  document.getElementById("open-add-event").addEventListener("click",()=>{App._resetEventForm();App.openModal("add-event-modal");});
+  document.getElementById("cal-prev").addEventListener("click",()=>{const n=new Date(S.calMonth);if(S.calView==="week")n.setDate(n.getDate()-7);else n.setMonth(n.getMonth()-1);S.calMonth=n;S.calSelectedDay=null;renderCalendar();});
+  document.getElementById("cal-next").addEventListener("click",()=>{const n=new Date(S.calMonth);if(S.calView==="week")n.setDate(n.getDate()+7);else n.setMonth(n.getMonth()+1);S.calMonth=n;S.calSelectedDay=null;renderCalendar();});
   // Close modals on overlay click
   document.querySelectorAll(".modal-overlay").forEach(ov=>{ov.addEventListener("click",e=>{if(e.target===ov)ov.style.display="none";});});
   renderAll();
@@ -3546,6 +3897,7 @@ function initApp(){
     }
   }
   checkDailyQuestHP(); // check on load
+  try{if(Notification.permission==="default")Notification.requestPermission();}catch(e){}
   setInterval(checkDailyQuestHP, 3600000); // re-check every hour
   // ── Floating Pomodoro drag (mouse + touch) ──
   (function(){
@@ -3858,6 +4210,47 @@ function _devEmojiTick(){
   }, 120);
 }
 setInterval(_devEmojiTick, 60000); // every 60s
+
+
+function _devAboutModal(e){
+  _devBadgeBurst(e);
+  const old=document.getElementById("dev-about-ov");
+  if(old){old.remove();return;}
+  const ov=document.createElement("div");
+  ov.id="dev-about-ov";
+  ov.style.cssText="position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);animation:nguFadeIn .3s ease both;padding:16px;";
+  ov.onclick=function(ev){if(ev.target===ov)ov.remove();};
+  const feats=[["\u2694\ufe0f","Quest System"],["\ud83d\udcda","Study Timer"],["\ud83d\udcd2","Sticky Notes"],["\ud83d\udcc5","Calendar"],["\ud83c\udf31","Garden"],["\ud83d\udcca","Stats & Skills"],["\ud83c\udfa8","Themes"],["\ud83d\udc94","Never Give Up"]];
+  ov.innerHTML=`<div style="background:linear-gradient(135deg,#1a0a2e,#0d1117,#1a0a2e);border:1px solid var(--border-accent);border-radius:24px;padding:36px 32px 28px;max-width:430px;width:100%;box-shadow:0 0 60px var(--accent-glow),0 20px 60px rgba(0,0,0,0.6);position:relative;animation:nguPop .4s cubic-bezier(0.34,1.56,0.64,1) both;">
+    <button onclick="document.getElementById('dev-about-ov').remove()" style="position:absolute;top:14px;right:16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:50%;width:28px;height:28px;color:var(--text-dim);cursor:pointer;font-size:13px;line-height:28px;text-align:center;">&times;</button>
+    <div style="text-align:center;margin-bottom:22px;">
+      <div style="font-size:42px;margin-bottom:8px;">&#x2694;&#xfe0f;</div>
+      <div style="font-size:22px;font-weight:900;background:linear-gradient(90deg,var(--accent),var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:1px;">RPG Scholar</div>
+      <div style="font-size:10px;color:var(--text-dim);margin-top:5px;letter-spacing:2.5px;text-transform:uppercase;">Where Study Becomes Legend</div>
+    </div>
+    <div style="height:1px;background:linear-gradient(90deg,transparent,var(--border-accent),transparent);margin-bottom:18px;"></div>
+    <div style="margin-bottom:18px;">
+      <div style="font-size:10px;font-weight:700;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:9px;">&#x1f4d6; About the Website</div>
+      <div style="font-size:13px;color:var(--text-mid);line-height:1.75;">RPG Scholar turns your study sessions into an epic adventure. Level up your character, complete quests, track habits, manage your calendar, and grow your garden &mdash; all while actually levelling up in real life.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:18px;">
+      ${feats.map(([icon,label])=>`<div style="padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);font-size:12px;color:var(--text-mid);display:flex;align-items:center;gap:7px;"><span>${icon}</span><span>${label}</span></div>`).join("")}
+    </div>
+    <div style="height:1px;background:linear-gradient(90deg,transparent,var(--border-accent),transparent);margin-bottom:18px;"></div>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
+      <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--primary));display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;box-shadow:0 0 20px var(--accent-glow);">&#x1f9d1;&#x200d;&#x1f4bb;</div>
+      <div>
+        <div style="font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px;">Developer</div>
+        <div style="font-size:18px;font-weight:900;background:linear-gradient(90deg,var(--accent),var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Ujjawal Sharma</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-top:3px;">&#x2728; Built with passion &amp; coffee</div>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <span style="font-size:10px;color:var(--text-dim);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:3px 14px;letter-spacing:1px;">v1.0 &middot; 2026 &middot; All Rights Reserved</span>
+    </div>
+  </div>`;
+  document.body.appendChild(ov);
+}
 
 function _devBadgeBurst(e){
   const badge = document.getElementById("dev-badge");
