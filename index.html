@@ -21,27 +21,47 @@
 html,body,*{cursor:none!important;user-select:none!important;-webkit-user-select:none!important;-moz-user-select:none!important;}
 input,textarea,select,[contenteditable]{cursor:text!important;user-select:text!important;-webkit-user-select:text!important;-moz-user-select:text!important;}
 :root{
-  --bg:radial-gradient(ellipse at 20% 0%,#1a0a2e 0%,#0d0d1a 55%,#080d14 100%);
-  --card:rgba(255,255,255,0.04);
-  --card-hover:rgba(255,255,255,0.07);
-  --sidebar:rgba(8,4,18,0.95);
-  --header:rgba(10,5,22,0.96);
-  --border:rgba(255,255,255,0.08);
-  --border-accent:rgba(245,158,11,0.35);
-  --primary:#f59e0b;--primary-text:#0d1117;
-  --accent:#a78bfa;--accent-glow:#a78bfa40;
-  --text:#e2e8f0;--text-mid:#94a3b8;--text-dim:#475569;
-  --hp:#f87171;--mp:#60a5fa;--xp:#fbbf24;
-  --star:rgba(168,85,247,0.15);
-  /* Dynamic glow vars - set by applyTheme() */
+  --bg:radial-gradient(ellipse at 20% 0%,#1c0d32 0%,#0e0b1a 50%,#07050f 100%);
+  --card:rgba(245,158,11,0.05);
+  --card-hover:rgba(245,158,11,0.09);
+  --sidebar:rgba(10,5,20,0.97);
+  --header:rgba(12,6,24,0.97);
+  --border:rgba(245,158,11,0.10);
+  --border-accent:rgba(245,158,11,0.38);
+  --primary:#f59e0b;--primary-text:#0a0600;
+  --accent:#c084fc;--accent-glow:rgba(192,132,252,0.35);
+  --text:#fef3c7;--text-mid:#fbbf24;--text-dim:#6b4c07;
+  --hp:#f97316;--mp:#fbbf24;--xp:#fcd34d;
+  --star:rgba(245,158,11,0.18);
   --primary-glow-inner:rgba(245,158,11,0.12);
   --primary-glow-far:rgba(245,158,11,0.22);
   --primary-glow-mid:rgba(245,158,11,0.5);
   --primary-glow-strong:rgba(245,158,11,0.7);
-  --accent-glow-strong:rgba(167,139,250,0.45);
-  --primary-glow-strong:rgba(245,158,11,0.7);
-  --accent-glow-strong:rgba(168,85,247,0.4);
+  --accent-glow-strong:rgba(192,132,252,0.45);
 }
+/* King's Throne Light Theme */
+body.light-theme #bg-canvas{opacity:0.35;}
+body.light-theme{background:var(--bg)!important;}
+body.light-theme .card{
+  background:rgba(184,134,11,0.06)!important;
+  border-color:rgba(184,134,11,0.18)!important;
+  box-shadow:0 2px 12px rgba(184,134,11,0.08)!important;
+}
+body.light-theme .nav-item{color:#4a3500!important;}
+body.light-theme .nav-item.active{
+  background:linear-gradient(135deg,rgba(218,165,32,0.18),rgba(184,134,11,0.12))!important;
+  border-color:rgba(218,165,32,0.5)!important;
+}
+body.light-theme #sidebar{
+  box-shadow:2px 0 30px rgba(184,134,11,0.12)!important;
+  border-right:1px solid rgba(184,134,11,0.2)!important;
+}
+body.light-theme .section-title{
+  background:linear-gradient(135deg,#b8860b,#daa520)!important;
+  -webkit-background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;
+}
+body.light-theme ::-webkit-scrollbar-thumb{background:rgba(184,134,11,0.35)!important;}
 html,body{height:100%;font-family:'Palatino Linotype','Book Antiqua',Palatino,serif;}
 body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;min-height:100dvh;overflow:hidden;}
 ::-webkit-scrollbar{width:4px;height:4px;}
@@ -69,22 +89,22 @@ body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;m
 /* Floating PiP Timer */
 #pip-timer{
   position:fixed;bottom:80px;right:20px;z-index:99999;
-  background:#000;border:1px solid rgba(255,255,255,0.12);
+  background:var(--header);border:1px solid var(--border-accent);
   border-radius:16px;padding:12px 14px;display:none;flex-direction:column;
   align-items:center;gap:6px;backdrop-filter:blur(20px);
-  box-shadow:0 8px 32px rgba(0,0,0,0.9);
+  box-shadow:0 0 28px var(--accent-glow),0 0 12px var(--accent-glow),0 8px 32px rgba(0,0,0,0.5);
   cursor:grab;min-width:130px;user-select:none!important;
   animation:pipSlideIn .3s ease;
 }
 #pip-timer:active{cursor:grabbing;}
 @keyframes pipSlideIn{from{opacity:0;transform:translateY(20px) scale(0.9)}to{opacity:1;transform:translateY(0) scale(1)}}
 #pip-timer.visible{display:flex;}
-#pip-label{font-size:8px;letter-spacing:2px;color:rgba(255,255,255,0.4);text-transform:uppercase;}
-#pip-time{font-size:28px;font-weight:900;font-family:monospace;color:var(--primary);letter-spacing:2px;line-height:1;}
-#pip-mode{font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:1px;}
+#pip-label{font-size:8px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;}
+#pip-time{font-size:28px;font-weight:900;font-family:monospace;color:var(--primary);letter-spacing:2px;line-height:1;text-shadow:0 0 12px var(--accent-glow);}
+#pip-mode{font-size:9px;color:var(--text-mid);letter-spacing:1px;opacity:0.7;}
 #pip-controls{display:flex;gap:6px;margin-top:2px;}
-#pip-controls button{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:var(--text);font-size:12px;padding:4px 8px;cursor:pointer!important;transition:all .15s;}
-#pip-controls button:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.25);}
+#pip-controls button{background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;padding:4px 8px;cursor:pointer!important;transition:all .15s;}
+#pip-controls button:hover{background:var(--card-hover);border-color:var(--border-accent);}
 #pip-ring{position:relative;width:56px;height:56px;}
 #pip-ring svg{position:absolute;inset:0;transform:rotate(-90deg);}
 #pip-ring-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:monospace;color:var(--primary);}
@@ -144,7 +164,7 @@ body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;m
 .btn-primary:hover{filter:brightness(1.12);box-shadow:0 4px 20px var(--accent-glow);}
 .btn-ghost{background:transparent;color:var(--text-mid);border:1px solid var(--border);padding:8px 14px;font-size:12px;}
 .btn-ghost:hover{border-color:var(--border-accent);color:var(--text);}
-.btn-danger{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.25);padding:6px 12px;font-size:11px;}
+.btn-danger{background:rgba(239,68,68,.12);color:var(--hp);border:1px solid rgba(248,113,113,.25);padding:6px 12px;font-size:11px;}
 .inp{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:8px 12px;font-size:13px;font-family:inherit;width:100%;outline:none;transition:border-color .2s;}
 .inp:focus{border-color:var(--border-accent);}
 .sel{background:rgba(0,0,0,.5);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:8px 12px;font-size:13px;font-family:inherit;width:100%;outline:none;}
@@ -190,9 +210,9 @@ body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;m
 .sm-live-dot{animation:smPulse 1.5s infinite;}
 .sm-card:hover .sm-del-btn{opacity:1!important;}
 #fp-widget{
-  border:1px solid rgba(255,255,255,0.1);
-  box-shadow:0 10px 50px rgba(0,0,0,0.95);
-  background:#000 !important;
+  border:1px solid rgba(245,158,11,0.4);
+  box-shadow:0 0 24px rgba(245,158,11,0.2),0 10px 50px rgba(0,0,0,0.8);
+  background:rgba(10,5,22,0.96) !important;
 }
 #notification{position:fixed;top:64px;right:12px;z-index:300;background:var(--header);border:1px solid var(--border-accent);border-radius:12px;padding:10px 16px;box-shadow:0 8px 32px var(--accent-glow);font-size:13px;color:var(--primary);font-weight:700;animation:popIn .25s cubic-bezier(0.34,1.56,0.64,1) both;max-width:280px;display:none;}
 
@@ -232,7 +252,7 @@ body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;m
 .login-box{animation:loginSlideUp .4s cubic-bezier(0.34,1.56,0.64,1) both;}
 .login-tabs{display:flex;gap:6px;margin-bottom:24px;background:rgba(0,0,0,.3);border-radius:10px;padding:4px;}
 .login-tab{flex:1;padding:8px;border:none;background:transparent;color:var(--text-mid);cursor:pointer;border-radius:8px;font-family:inherit;font-weight:700;font-size:13px;transition:all .2s;}
-.login-tab.active{background:var(--primary);color:#0d1117;}
+.login-tab.active{background:var(--primary);color:var(--primary-text);}
 
 /* Profile pic */
 .profile-pic-wrap{position:relative;width:72px;height:72px;cursor:pointer;flex-shrink:0;background:transparent;}
@@ -266,7 +286,7 @@ body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;m
   <div class="login-box">
     <div style="text-align:center;margin-bottom:24px">
       <div style="font-size:52px;animation:glow 3s ease-in-out infinite">⚔️</div>
-      <div style="font-size:22px;font-weight:900;color:#f59e0b;letter-spacing:1px;margin-top:8px">RPG Scholar</div>
+      <div style="font-size:22px;font-weight:900;color:var(--primary);letter-spacing:1px;margin-top:8px">RPG Scholar</div>
       <div style="font-size:12px;color:#94a3b8;margin-top:4px">Your adventure awaits</div>
     </div>
     <div class="login-tabs">
@@ -283,7 +303,7 @@ body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;m
         <input class="inp" id="login-pass" type="password" placeholder="Enter your password" autocomplete="current-password"/>
       </div>
       <button class="btn btn-primary" style="width:100%;padding:12px;font-size:14px" onclick="Auth.login()">⚔️ Enter the Realm</button>
-      <div id="login-err" style="color:#f87171;font-size:12px;text-align:center;margin-top:10px;display:none"></div>
+      <div id="login-err" style="color:var(--hp);font-size:12px;text-align:center;margin-top:10px;display:none"></div>
     </div>
     <div id="register-form" style="display:none">
       <div style="margin-bottom:12px">
@@ -299,7 +319,7 @@ body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;m
         <input class="inp" id="reg-pass2" type="password" placeholder="Repeat password" autocomplete="new-password"/>
       </div>
       <button class="btn btn-primary" style="width:100%;padding:12px;font-size:14px" onclick="Auth.register()">🌟 Begin Your Journey</button>
-      <div id="reg-err" style="color:#f87171;font-size:12px;text-align:center;margin-top:10px;display:none"></div>
+      <div id="reg-err" style="color:var(--hp);font-size:12px;text-align:center;margin-top:10px;display:none"></div>
     </div>
   </div>
 </div>
@@ -317,8 +337,8 @@ body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;m
       <!-- injected by JS -->
     </div>
     <div style="display:flex;align-items:center;gap:10px">
-      <span id="h-streak" style="font-size:12px;color:#fb923c">🔥0</span>
-      <span id="h-coins" style="font-size:12px;color:var(--primary);display:flex;align-items:center;gap:3px"><span style="display:inline-block;width:14px;height:14px;background:linear-gradient(135deg,#fbbf24,#f59e0b);border-radius:50%;border:1.5px solid #fcd34d;box-shadow:0 0 4px rgba(251,191,36,0.6);flex-shrink:0"></span><span id="h-coins-val">0</span></span>
+      <span id="h-streak" style="font-size:12px;color:var(--xp)">🔥0</span>
+      <span id="h-coins" style="font-size:12px;color:var(--primary);display:flex;align-items:center;gap:3px"><span style="display:inline-block;width:14px;height:14px;background:linear-gradient(135deg,var(--xp),var(--primary));border-radius:50%;border:1.5px solid var(--xp);box-shadow:0 0 4px rgba(251,191,36,0.6);flex-shrink:0"></span><span id="h-coins-val">0</span></span>
       <div id="h-level" style="background:rgba(245,158,11,.2);border:1px solid var(--border-accent);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;color:var(--primary)">Lv.1</div>
       <button class="btn btn-ghost" id="music-btn" style="padding:4px 8px;font-size:16px" title="Toggle music">🔇</button>
     </div>
@@ -820,7 +840,7 @@ body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;m
           </div>
         </div>
         <div class="card" style="margin-bottom:12px;border:1px solid rgba(52,211,153,0.2)">
-          <div style="font-size:14px;font-weight:700;color:#34d399;margin-bottom:6px">💾 Data Backup</div>
+          <div style="font-size:14px;font-weight:700;color:var(--accent);margin-bottom:6px">💾 Data Backup</div>
           <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px">Export your progress to a file and import it anytime — even into a new version of the app.</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button class="btn btn-primary" style="padding:8px 16px;font-size:13px;flex:1" onclick="App.exportData()">📤 Export Save</button>
@@ -1070,7 +1090,7 @@ body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;m
           <div style="font-size:10px;color:var(--text-dim);margin-bottom:4px">Or upload an image as icon</div>
           <input type="file" id="link-icon-upload" accept="image/*" style="display:none" onchange="App.handleLinkIconUpload(this)"/>
           <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px" onclick="document.getElementById('link-icon-upload').click()">📷 Upload image icon</button>
-          <span id="link-icon-status" style="font-size:10px;color:#34d399;margin-left:8px;display:none">✓ Image uploaded</span>
+          <span id="link-icon-status" style="font-size:10px;color:var(--accent);margin-left:8px;display:none">✓ Image uploaded</span>
         </div>
       </div>
       <div>
@@ -1291,32 +1311,83 @@ const QUEST_DB=[
 ];
 
 const THEMES={
-  darkFantasy:{name:"Dark Fantasy",icon:"⚔️",primary:"#f59e0b",primaryText:"#0d1117",accent:"#a78bfa",accentGlow:"#a78bfa40",hp:"#f87171",mp:"#60a5fa",xp:"#fbbf24",
-    bg:"radial-gradient(ellipse at 20% 0%,#1a0a2e 0%,#0d0d1a 55%,#080d14 100%)",card:"rgba(255,255,255,0.04)",cardHover:"rgba(255,255,255,0.07)",
-    sidebar:"rgba(8,4,18,0.95)",header:"rgba(10,5,22,0.96)",border:"rgba(255,255,255,0.08)",borderAccent:"rgba(245,158,11,0.35)",
-    text:"#e2e8f0",textMid:"#94a3b8",textDim:"#475569",star:"rgba(168,85,247,0.15)"},
-  cyberpunk:{name:"Cyberpunk",icon:"🤖",primary:"#00ffff",primaryText:"#000a14",accent:"#ff0080",accentGlow:"#ff008040",hp:"#ff0080",mp:"#00ffff",xp:"#ffff00",
-    bg:"radial-gradient(ellipse at 0% 0%,#000a14 0%,#000810 55%,#000508 100%)",card:"rgba(0,255,255,0.03)",cardHover:"rgba(0,255,255,0.06)",
-    sidebar:"rgba(0,5,10,0.97)",header:"rgba(0,5,10,0.97)",border:"rgba(0,255,255,0.12)",borderAccent:"rgba(0,255,255,0.4)",
-    text:"#cffafe",textMid:"#67e8f9",textDim:"#164e63",star:"rgba(0,255,255,0.08)"},
-  emeraldForest:{name:"Forest",icon:"🌲",primary:"#34d399",primaryText:"#022c22",accent:"#a3e635",accentGlow:"#a3e63540",hp:"#f87171",mp:"#34d399",xp:"#a3e635",
-    bg:"radial-gradient(ellipse at 30% 0%,#0a1a0a 0%,#061206 55%,#040d04 100%)",card:"rgba(52,211,153,0.04)",cardHover:"rgba(52,211,153,0.08)",
-    sidebar:"rgba(4,10,4,0.97)",header:"rgba(4,10,4,0.97)",border:"rgba(52,211,153,0.12)",borderAccent:"rgba(52,211,153,0.4)",
-    text:"#d1fae5",textMid:"#6ee7b7",textDim:"#065f46",star:"rgba(52,211,153,0.08)"},
-  oceanDepth:{name:"Ocean",icon:"🌊",primary:"#38bdf8",primaryText:"#01111d",accent:"#818cf8",accentGlow:"#818cf840",hp:"#fb7185",mp:"#38bdf8",xp:"#fbbf24",
-    bg:"radial-gradient(ellipse at 50% 0%,#020b18 0%,#010812 55%,#010610 100%)",card:"rgba(56,189,248,0.04)",cardHover:"rgba(56,189,248,0.08)",
-    sidebar:"rgba(1,5,12,0.97)",header:"rgba(1,5,12,0.97)",border:"rgba(56,189,248,0.12)",borderAccent:"rgba(56,189,248,0.4)",
-    text:"#e0f2fe",textMid:"#7dd3fc",textDim:"#0c4a6e",star:"rgba(56,189,248,0.08)"},
-  emberDawn:{name:"Ember",icon:"🔥",primary:"#fb923c",primaryText:"#1a0800",accent:"#fbbf24",accentGlow:"#fbbf2440",hp:"#f87171",mp:"#fb923c",xp:"#fbbf24",
-    bg:"radial-gradient(ellipse at 80% 0%,#1a0800 0%,#100600 55%,#0a0400 100%)",card:"rgba(251,146,60,0.04)",cardHover:"rgba(251,146,60,0.08)",
-    sidebar:"rgba(10,4,0,0.97)",header:"rgba(10,4,0,0.97)",border:"rgba(251,146,60,0.12)",borderAccent:"rgba(251,146,60,0.4)",
-    text:"#fff7ed",textMid:"#fed7aa",textDim:"#7c2d12",star:"rgba(251,146,60,0.08)"},
-  sakura:{name:"Sakura",icon:"🌸",primary:"#f472b6",primaryText:"#1a0014",accent:"#e879f9",accentGlow:"#e879f940",hp:"#f87171",mp:"#c084fc",xp:"#f472b6",
-    bg:"radial-gradient(ellipse at 50% 0%,#1a0a14 0%,#110810 55%,#0a060c 100%)",card:"rgba(244,114,182,0.04)",cardHover:"rgba(244,114,182,0.08)",
-    sidebar:"rgba(10,5,10,0.97)",header:"rgba(10,5,10,0.97)",border:"rgba(244,114,182,0.12)",borderAccent:"rgba(244,114,182,0.4)",
-    text:"#fdf2f8",textMid:"#f9a8d4",textDim:"#831843",star:"rgba(244,114,182,0.08)"},
-};
+  darkFantasy:{name:"Dark Fantasy",icon:"⚔️",
+    primary:"#f59e0b",primaryText:"#0a0600",
+    accent:"#c084fc",accentGlow:"#c084fc35",
+    hp:"#f97316",mp:"#fbbf24",xp:"#fcd34d",
+    bg:"radial-gradient(ellipse at 20% 0%,#1c0d32 0%,#0e0b1a 50%,#07050f 100%)",
+    card:"rgba(245,158,11,0.05)",cardHover:"rgba(245,158,11,0.09)",
+    sidebar:"rgba(10,5,20,0.97)",header:"rgba(12,6,24,0.97)",
+    border:"rgba(245,158,11,0.10)",borderAccent:"rgba(245,158,11,0.38)",
+    text:"#fef3c7",textMid:"#fbbf24",textDim:"#6b4c07",
+    star:"rgba(245,158,11,0.18)"},
 
+  cyberpunk:{name:"Cyberpunk",icon:"🤖",
+    primary:"#00ffff",primaryText:"#000810",
+    accent:"#ff0080",accentGlow:"#ff008035",
+    hp:"#ff4dff",mp:"#00e5ff",xp:"#ffff00",
+    bg:"radial-gradient(ellipse at 10% 10%,#000b12 0%,#000610 55%,#000308 100%)",
+    card:"rgba(0,255,255,0.04)",cardHover:"rgba(0,255,255,0.08)",
+    sidebar:"rgba(0,3,8,0.98)",header:"rgba(0,3,8,0.98)",
+    border:"rgba(0,255,255,0.12)",borderAccent:"rgba(0,255,255,0.45)",
+    text:"#e0ffff",textMid:"#67e8f9",textDim:"#0e4f5e",
+    star:"rgba(0,255,255,0.12)"},
+
+  emeraldForest:{name:"Forest",icon:"🌲",
+    primary:"#34d399",primaryText:"#011a10",
+    accent:"#86efac",accentGlow:"#86efac35",
+    hp:"#6ee7b7",mp:"#34d399",xp:"#a7f3d0",
+    bg:"radial-gradient(ellipse at 25% 0%,#061a0c 0%,#040e07 55%,#020804 100%)",
+    card:"rgba(52,211,153,0.05)",cardHover:"rgba(52,211,153,0.10)",
+    sidebar:"rgba(2,7,4,0.98)",header:"rgba(2,7,4,0.98)",
+    border:"rgba(52,211,153,0.12)",borderAccent:"rgba(52,211,153,0.42)",
+    text:"#d1fae5",textMid:"#6ee7b7",textDim:"#065f46",
+    star:"rgba(52,211,153,0.12)"},
+
+  oceanDepth:{name:"Ocean",icon:"🌊",
+    primary:"#38bdf8",primaryText:"#010c16",
+    accent:"#818cf8",accentGlow:"#818cf835",
+    hp:"#7dd3fc",mp:"#bae6fd",xp:"#e0f2fe",
+    bg:"radial-gradient(ellipse at 50% 0%,#020e1e 0%,#010912 55%,#01060e 100%)",
+    card:"rgba(56,189,248,0.05)",cardHover:"rgba(56,189,248,0.10)",
+    sidebar:"rgba(1,5,10,0.98)",header:"rgba(1,5,10,0.98)",
+    border:"rgba(56,189,248,0.12)",borderAccent:"rgba(56,189,248,0.42)",
+    text:"#e0f2fe",textMid:"#7dd3fc",textDim:"#0c4a6e",
+    star:"rgba(56,189,248,0.12)"},
+
+  emberDawn:{name:"Ember",icon:"🔥",
+    primary:"#fb923c",primaryText:"#150600",
+    accent:"#fbbf24",accentGlow:"#fbbf2435",
+    hp:"#fca5a5",mp:"#fb923c",xp:"#fcd34d",
+    bg:"radial-gradient(ellipse at 75% 0%,#1c0800 0%,#110500 55%,#0a0300 100%)",
+    card:"rgba(251,146,60,0.05)",cardHover:"rgba(251,146,60,0.10)",
+    sidebar:"rgba(10,3,0,0.98)",header:"rgba(10,3,0,0.98)",
+    border:"rgba(251,146,60,0.12)",borderAccent:"rgba(251,146,60,0.42)",
+    text:"#fff7ed",textMid:"#fed7aa",textDim:"#7c2d12",
+    star:"rgba(251,146,60,0.12)"},
+
+  sakura:{name:"Sakura",icon:"🌸",
+    primary:"#f472b6",primaryText:"#12001a",
+    accent:"#f0abfc",accentGlow:"#f0abfc35",
+    hp:"#fda4af",mp:"#f0abfc",xp:"#fbcfe8",
+    bg:"radial-gradient(ellipse at 50% 0%,#1a0818 0%,#110610 55%,#0a040c 100%)",
+    card:"rgba(244,114,182,0.05)",cardHover:"rgba(244,114,182,0.10)",
+    sidebar:"rgba(10,4,10,0.98)",header:"rgba(10,4,10,0.98)",
+    border:"rgba(244,114,182,0.12)",borderAccent:"rgba(244,114,182,0.42)",
+    text:"#fdf2f8",textMid:"#f9a8d4",textDim:"#9d174d",
+    star:"rgba(244,114,182,0.15)"},
+
+  kingsGold:{name:"King's Throne",icon:"♛",
+    primary:"#b8860b",primaryText:"#ffffff",
+    accent:"#daa520",accentGlow:"#daa52040",
+    hp:"#ffd700",mp:"#b8860b",xp:"#f5c518",
+    bg:"radial-gradient(ellipse at 40% 0%,#fffef9 0%,#fdfaf0 35%,#faf5e4 65%,#f5edcc 100%)",
+    card:"rgba(184,134,11,0.06)",cardHover:"rgba(184,134,11,0.12)",
+    sidebar:"rgba(255,254,248,0.98)",header:"rgba(255,254,248,0.98)",
+    border:"rgba(184,134,11,0.18)",borderAccent:"rgba(218,165,32,0.60)",
+    text:"#1a1100",textMid:"#6b4f00",textDim:"#c5a84f",
+    star:"rgba(218,165,32,0.35)"},
+}
 const CAT_ICONS={Math:"📐",Physics:"⚡",Chem:"🧪",English:"📖",Tech:"💻",Health:"❤️",Self:"🧠",Social:"👥",Finance:"💰",Create:"🎨",Bonus:"⭐"};
 // Renders an icon — either emoji text or an <img> if it's a data URL
 function catIconHtml(icon,size=18){
@@ -1325,14 +1396,21 @@ function catIconHtml(icon,size=18){
   return icon;
 }
 const TYPE_META={
-  main:{label:"MAIN QUEST",color:"#f59e0b",icon:"⚔"},
-  daily:{label:"DAILY",color:"#34d399",icon:"☀"},
-  side:{label:"SIDE QUEST",color:"#a78bfa",icon:"📜"},
-  habit:{label:"HABIT",color:"#60a5fa",icon:"♻"},
-  weekly:{label:"WEEKLY",color:"#fb923c",icon:"📅"},
-  bonus:{label:"EPIC QUEST",color:"#e879f9",icon:"✦"},
+  get main(){const p=getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();return{label:"MAIN QUEST",color:p||'#f59e0b',icon:"⚔"};},
+  get daily(){const a=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();return{label:"DAILY",color:a||'#c084fc',icon:"☀"};},
+  get side(){const m=getComputedStyle(document.documentElement).getPropertyValue('--text-mid').trim();return{label:"SIDE QUEST",color:m||'#fbbf24',icon:"📜"};},
+  get habit(){const x=getComputedStyle(document.documentElement).getPropertyValue('--xp').trim();return{label:"HABIT",color:x||'#fcd34d',icon:"♻"};},
+  get weekly(){const h=getComputedStyle(document.documentElement).getPropertyValue('--hp').trim();return{label:"WEEKLY",color:h||'#f97316',icon:"📅"};},
+  get bonus(){const a=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();return{label:"EPIC QUEST",color:a||'#c084fc',icon:"✦"};},
 };
-const STAT_COLORS={INT:"#60a5fa",WIS:"#a78bfa",STR:"#f87171",END:"#34d399",CHA:"#fbbf24",LCK:"#f472b6"};
+const STAT_COLORS={
+  get INT(){return getComputedStyle(document.documentElement).getPropertyValue('--primary').trim()||'#f59e0b'},
+  get WIS(){return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#c084fc'},
+  get STR(){return getComputedStyle(document.documentElement).getPropertyValue('--hp').trim()||'#f97316'},
+  get END(){return getComputedStyle(document.documentElement).getPropertyValue('--mp').trim()||'#fbbf24'},
+  get CHA(){return getComputedStyle(document.documentElement).getPropertyValue('--xp').trim()||'#fcd34d'},
+  get LCK(){return getComputedStyle(document.documentElement).getPropertyValue('--text-mid').trim()||'#fbbf24'},
+};
 const STAT_KEYS=["INT","WIS","STR","END","CHA","LCK"];
 const TITLES=["Novice","Apprentice Scholar","Student of the Realm","Adept","Journeyman","Scholar","Sage Initiate","Arcanist","Master Scholar","Grand Sage","Archon of Wisdom","Legendary Polymath"];
 const AVATARS=[];
@@ -1684,12 +1762,27 @@ const Auth={
         speed:Math.random()*0.12+0.02,twinkle:Math.random()*Math.PI*2,
         twinkleSpeed:0.015+Math.random()*0.02,layer:Math.floor(Math.random()*3)});
     }
-    // Nebula clouds
+    // Nebula clouds — hue derived from primary color
     nebula=[];
+    function _getThemeHue(){
+      const p=getPrimary();
+      const arr=hexToRgbArr(p);
+      // Convert RGB to approximate hue
+      const r=arr[0]/255,g=arr[1]/255,b=arr[2]/255;
+      const max=Math.max(r,g,b),min=Math.min(r,g,b);
+      if(max===min)return 45;
+      let h;
+      if(max===r)h=(60*((g-b)/(max-min))+360)%360;
+      else if(max===g)h=60*((b-r)/(max-min))+120;
+      else h=60*((r-g)/(max-min))+240;
+      return h;
+    }
+    const _baseHue=_getThemeHue();
+    const _isLight=document.body.classList.contains('light-theme');
     for(let i=0;i<7;i++){
       nebula.push({x:Math.random()*W,y:Math.random()*H,
-        r:120+Math.random()*200,alpha:0.025+Math.random()*0.045,
-        hue:Math.random()<0.5?260:200,drift:Math.random()*0.25-0.125,
+        r:180+Math.random()*260,alpha:_isLight?(0.06+Math.random()*0.08):(0.020+Math.random()*0.035),
+        hue:_baseHue+(Math.random()<0.5?0:20),drift:Math.random()*0.25-0.125,
         vx:Math.random()*0.06-0.03,vy:Math.random()*0.04-0.02});
     }
     // Large slow-drifting particles / dust
@@ -1717,6 +1810,11 @@ const Auth={
     raf=requestAnimationFrame(draw);
     frame++;
     ctx.clearRect(0,0,W,H);
+    // Light theme: subtle warm golden wash
+    if(document.body.classList.contains('light-theme')){
+      ctx.fillStyle='rgba(245,235,180,0.08)';
+      ctx.fillRect(0,0,W,H);
+    }
 
     const primary=getPrimary();
     const [pr,pg,pb]=hexToRgbArr(primary);
@@ -1727,10 +1825,10 @@ const Auth={
       if(n.x<-n.r)n.x=W+n.r;if(n.x>W+n.r)n.x=-n.r;
       if(n.y<-n.r)n.y=H+n.r;if(n.y>H+n.r)n.y=-n.r;
       const grad=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r);
-      const baseH=n.hue+(frame*0.04);
-      grad.addColorStop(0,`hsla(${baseH},70%,55%,${n.alpha})`);
-      grad.addColorStop(0.5,`hsla(${baseH+20},60%,40%,${n.alpha*0.5})`);
-      grad.addColorStop(1,`hsla(${baseH+40},50%,30%,0)`);
+      const baseH=n.hue+(frame*0.02);
+      grad.addColorStop(0,`hsla(${baseH},65%,50%,${n.alpha})`);
+      grad.addColorStop(0.5,`hsla(${baseH+15},55%,35%,${n.alpha*0.5})`);
+      grad.addColorStop(1,`hsla(${baseH+25},45%,25%,0)`);
       ctx.fillStyle=grad;
       ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);ctx.fill();
     });
@@ -1751,7 +1849,8 @@ const Auth={
       ctx.beginPath();ctx.arc(s.x,s.y,s.r*4,0,Math.PI*2);ctx.fill();
 
       // Star core
-      ctx.fillStyle=`rgba(255,255,255,${0.6*blink+0.2})`;
+      const _light=document.body.classList.contains('light-theme');
+      ctx.fillStyle=_light?`rgba(${pr},${pg},${pb},${0.7*blink+0.1})`:`rgba(255,255,255,${0.6*blink+0.2})`;
       ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill();
 
       // Cross sparkle on bright stars
@@ -1777,6 +1876,7 @@ const Auth={
 
   resize();
   window.addEventListener("resize",()=>{if(raf)cancelAnimationFrame(raf);resize();draw();});
+  window._rebuildCanvasScene=()=>{buildScene();};
   draw();
 })();
 
@@ -1845,6 +1945,10 @@ function hexToRgb(hex){
 function applyTheme(t){
   const T=THEMES[t];
   const r=document.documentElement.style;
+  // Toggle light theme class for King's theme
+  document.body.classList.toggle('light-theme', t==='kingsGold');
+  // Rebuild canvas scene to pick up new theme hues
+  if(window._rebuildCanvasScene)window._rebuildCanvasScene();
   r.setProperty("--bg",T.bg);r.setProperty("--card",T.card);r.setProperty("--card-hover",T.cardHover);
   r.setProperty("--sidebar",T.sidebar);r.setProperty("--header",T.header);r.setProperty("--border",T.border);
   r.setProperty("--border-accent",T.borderAccent);r.setProperty("--primary",T.primary);r.setProperty("--primary-text",T.primaryText);
@@ -2112,7 +2216,7 @@ function renderDashboard(){
   document.getElementById("d-stats-row").innerHTML=[
     {icon:"📜",val:active.length,label:"Active Quests",color:"var(--primary)"},
     {icon:"⏱️",val:`${Math.floor(c.totalStudyMin/60)}h${c.totalStudyMin%60}m`,label:"Study Time",color:"var(--mp)"},
-    {icon:"🏅",val:c.coins,label:"Coins",color:"#fbbf24"},
+    {icon:"🏅",val:c.coins,label:"Coins",color:"var(--xp)"},
   ].map(s=>`<div class="card" style="text-align:center;padding:12px"><div style="font-size:24px;margin-bottom:2px">${s.icon}</div><div style="font-size:20px;font-weight:900;color:${s.color}">${s.val}</div><div style="font-size:10px;color:var(--text-dim)">${s.label}</div></div>`).join("");
   const aq=document.getElementById("d-active-quests");
   if(active.length===0){aq.innerHTML=`<div style="color:var(--text-dim);text-align:center;padding:16px 0;font-size:13px">🎉 All quests complete! Add more from the Quest Library.</div>`;}
@@ -2222,7 +2326,7 @@ function renderTimer(){
         const elapsed=Math.floor(t.elapsed/60);
         const lit=t.elapsed>0&&i<elapsed;
         const isCurrent=i===elapsed&&t.elapsed%60>0;
-        const col=lit?"var(--primary)":isCurrent?ringCol:"rgba(255,255,255,0.15)";
+        const col=lit?"var(--primary)":isCurrent?ringCol:(document.body.classList.contains("light-theme")?"rgba(180,134,11,0.25)":"rgba(255,255,255,0.15)");
         tickHtml+=`<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2f.toFixed(1)}" y2="${y2f.toFixed(1)}" stroke="${col}" stroke-width="${isMajor?2:1}" stroke-linecap="round" opacity="${lit||isCurrent?1:0.4}"/>`;
       }
       ticksEl.innerHTML=tickHtml;
@@ -2491,7 +2595,7 @@ function renderSkills(){
     [c.coins>=500,"🏅","Wealthy","Earn 500 coins"],
     [c.stats.INT>=15,"🧠","Genius Intellect","INT reaches 15"],
   ];
-  document.getElementById("achievements-list").innerHTML=achs.map(([earned,icon,name,desc])=>`<div class="achiev${earned?" earned":" locked"}"><span style="font-size:22px;filter:${earned?"none":"grayscale(1)"}">${icon}</span><div style="min-width:0"><div style="font-size:12px;font-weight:700;color:${earned?"var(--primary)":"var(--text-dim)"}">${name}</div><div style="font-size:10px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${desc}</div></div>${earned?`<span style="margin-left:auto;color:#34d399;font-size:12px;flex-shrink:0">✓</span>`:""}</div>`).join("");
+  document.getElementById("achievements-list").innerHTML=achs.map(([earned,icon,name,desc])=>`<div class="achiev${earned?" earned":" locked"}"><span style="font-size:22px;filter:${earned?"none":"grayscale(1)"}">${icon}</span><div style="min-width:0"><div style="font-size:12px;font-weight:700;color:${earned?"var(--primary)":"var(--text-dim)"}">${name}</div><div style="font-size:10px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${desc}</div></div>${earned?`<span style="margin-left:auto;color:var(--accent);font-size:12px;flex-shrink:0">✓</span>`:""}</div>`).join("");
   // Level progression
   const lvlEl=document.getElementById("level-progression-list");
   if(lvlEl){
@@ -2509,7 +2613,7 @@ function renderSkills(){
           <div style="font-size:10px;color:var(--text-dim)">Level ${lv} · ${xpNeeded} XP to reach</div>
         </div>
         ${isCurrent?`<span style="font-size:10px;font-weight:700;color:var(--primary);background:rgba(245,158,11,0.15);padding:2px 8px;border-radius:10px;border:1px solid rgba(245,158,11,0.3)">YOU ARE HERE</span>`:""}
-        ${isPast?`<span style="color:#34d399;font-size:14px">✓</span>`:""}
+        ${isPast?`<span style="color:var(--accent);font-size:14px">✓</span>`:""}
       </div>`;
     }).join("");
   }
@@ -2849,6 +2953,11 @@ function renderStats(){
     heatCanvas.height=H;
     const ctx=heatCanvas.getContext("2d");
     ctx.clearRect(0,0,W,H);
+    // Light theme: subtle warm golden wash
+    if(document.body.classList.contains('light-theme')){
+      ctx.fillStyle='rgba(245,235,180,0.08)';
+      ctx.fillRect(0,0,W,H);
+    }
 
     // Period label & nav
     const mNames=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -2868,7 +2977,7 @@ function renderStats(){
     const hr=parseInt(baseHex.slice(1,3),16)||245;
     const hg=parseInt(baseHex.slice(3,5),16)||158;
     const hb=parseInt(baseHex.slice(5,7),16)||11;
-    const c0="rgba(255,255,255,0.07)";     // 0 min — empty
+    const c0=document.body.classList.contains("light-theme")?"rgba(101,76,0,0.10)":"rgba(255,255,255,0.07)";     // 0 min — empty
     const c1=`rgba(${hr},${hg},${hb},0.2)`;  // 1-29 min — barely visible
     const c2=`rgba(${hr},${hg},${hb},0.45)`; // 30-119 min — light
     const c3=`rgba(${hr},${hg},${hb},0.75)`; // 120-479 min — medium
@@ -2885,7 +2994,8 @@ function renderStats(){
     // Day labels on left (odd rows = brighter)
     ctx.font=`${Math.max(8,cellSize-2)}px sans-serif`;ctx.textAlign="right";
     ["Su","Mo","Tu","We","Th","Fr","Sa"].forEach((lbl,row)=>{
-      ctx.fillStyle=row%2===0?"rgba(255,255,255,0.2)":"rgba(255,255,255,0.5)";
+      const _lt=document.body.classList.contains("light-theme");
+    ctx.fillStyle=row%2===0?(_lt?"rgba(101,76,0,0.45)":"rgba(255,255,255,0.2)"):(_lt?"rgba(101,76,0,0.75)":"rgba(255,255,255,0.5)");
       ctx.fillText(lbl,PAD_L-4,PAD_T+row*cellStep+cellSize-1);
     });
 
@@ -2903,7 +3013,7 @@ function renderStats(){
         // Month label on first Sunday of each month
         if(row===0&&dm!==lastMo&&dy===year){
           lastMo=dm;
-          ctx.fillStyle="rgba(255,255,255,0.7)";
+          ctx.fillStyle=document.body.classList.contains("light-theme")?"rgba(101,76,0,0.85)":"rgba(255,255,255,0.7)";
           ctx.font=`bold ${Math.max(8,cellSize-1)}px sans-serif`;
           ctx.textAlign="left";
           ctx.fillText(mNames[dm],x,PAD_T-6);
@@ -2920,7 +3030,7 @@ function renderStats(){
 
         // Today: white ring
         if(iso===todayISO){
-          ctx.strokeStyle="rgba(255,255,255,0.95)";ctx.lineWidth=1.5;
+          ctx.strokeStyle=document.body.classList.contains("light-theme")?"rgba(101,76,0,0.9)":"rgba(255,255,255,0.95)";ctx.lineWidth=1.5;
           ctx.beginPath();
           if(ctx.roundRect)ctx.roundRect(x,y,cellSize,cellSize,2);else ctx.rect(x,y,cellSize,cellSize);
           ctx.stroke();
@@ -3173,95 +3283,88 @@ const SM_DEFAULT_MATES=[
 ];
 
 function smSchedule(style,now,mate){
-  const h=now.getHours(),m=now.getMinutes(),s=now.getSeconds();
+  const h=now.getHours(),m=now.getMinutes();
   const totalMin=h*60+m;
   const sm=S.studymates||{};
   const dayStarted=!!(sm.dayStarted&&sm.dayStartedDate===todayStr());
 
-  // CUSTOM MATES: start from 0 at creation, always studying
-  if(mate&&!mate.builtIn){
-    const createdAt=mate.createdAt||Date.now();
-    const todayMid=new Date(now);todayMid.setHours(0,0,0,0);
-    const startMs=createdAt>=todayMid.getTime()?createdAt:todayMid.getTime();
-    return{studying:true,sessionSec:Math.max(0,Math.floor((now.getTime()-startMs)/1000))};
-  }
+  // CUSTOM MATES fall through to their assigned style schedule (same as built-in)
+  // (no special early return - let style logic handle them)
 
   // DEEP FOCUS
-  // Activates after user's first timer. Non-stop study.
-  // 11pm: 50% stop. If continues -> midnight: 50% stop.
-  if(style==="\uD83D\uDCD6 Deep Focus"){
-    if(!dayStarted)return{studying:false,sessionSec:0};
+  // Starts when user starts their first timer. Non-stop all day.
+  // 11pm: 50% chance to stop. If continues → midnight: 50% chance to stop.
+  if(style==="📖 Deep Focus"){
+    if(!dayStarted)return{studying:false};
     const dec=sm.dfDecision||'pending';
-    if(h>=23&&dec==='stop11')return{studying:false,sessionSec:0};
-    if(h===0&&(dec==='stop11'||dec==='stop12'))return{studying:false,sessionSec:0};
-    if(h>=1&&h<6&&dec!=='continue')return{studying:false,sessionSec:0};
-    return{studying:true,sessionSec:0};
+    if(h===23&&dec==='stop11')return{studying:false};
+    if(h===0&&(dec==='stop11'||dec==='stop12'))return{studying:false};
+    if(h>=1&&h<6&&dec!=='continue')return{studying:false};
+    return{studying:true};
   }
 
   // SPEED RUNNER
   // 4h study, 1h break. After first user timer. Rests 1am-6am.
-  if(style==="\u26A1 Speed Runner"){
-    if(!dayStarted)return{studying:false,sessionSec:0};
-    if(h>=1&&h<6)return{studying:false,sessionSec:0};
+  if(style==="⚡ Speed Runner"){
+    if(!dayStarted)return{studying:false};
+    if(h>=1&&h<6)return{studying:false};
     const pos=totalMin%300,studying=pos<240;
-    return{studying,sessionSec:0};
+    return{studying};
   }
 
   // GOAL SETTER
-  // 25min study, 5min break. After first user timer. Off 12am-6am.
-  if(style==="\uD83C\uDFAF Goal Setter"){
-    if(!dayStarted)return{studying:false,sessionSec:0};
-    if(h<6)return{studying:false,sessionSec:0};
+  // 25min study + 5min break all day. After first user timer. Off 12am-6am.
+  if(style==="🎯 Goal Setter"){
+    if(!dayStarted)return{studying:false};
+    if(h>=0&&h<6)return{studying:false}; // off midnight-6am
     const pos=totalMin%30,studying=pos<25;
-    return{studying,sessionSec:0};
+    return{studying};
   }
 
   // NIGHT OWL
-  // 12am-6am. 25min study, 5min break. Independent of user timer.
-  if(style==="\uD83C\uDF19 Night Owl"){
-    if(h<6){const pos=totalMin%30,studying=pos<25;return{studying,sessionSec:0};}
-    return{studying:false,sessionSec:0};
+  // Only 12am-6am. 25min study + 5min break. Independent of user timer.
+  if(style==="🌙 Night Owl"){
+    if(h>=0&&h<6){
+      const pos=totalMin%30,studying=pos<25;
+      return{studying};
+    }
+    return{studying:false};
   }
 
   // EARLY BIRD
   // 5am-10am only, no break. After first user timer.
-  if(style==="\u2600\uFE0F Early Bird"){
-    if(!dayStarted)return{studying:false,sessionSec:0};
-    if(h>=5&&h<10)return{studying:true,sessionSec:0};
-    return{studying:false,sessionSec:0};
+  if(style==="☀️ Early Bird"){
+    if(!dayStarted)return{studying:false};
+    if(h>=5&&h<10)return{studying:true};
+    return{studying:false};
   }
 
   // LO-FI VIBES
-  // Mirrors user with 5min ON delay, 15min OFF delay. Always (day or night).
-  if(style==="\uD83C\uDFB5 Lo-fi Vibes"){
-    return{studying:!!(sm.lofiActive),sessionSec:0};
+  // Follows user always (day & night). 5min ON delay, 15min OFF delay.
+  if(style==="🎵 Lo-fi Vibes"){
+    return{studying:!!(sm.lofiActive)};
   }
 
   // ZEN MODE
-  // Random schedule each cycle (25% each):
-  //   A: 1h study + 15min break
-  //   B: 2h study + 1h break
-  //   C: 5h study + 2h break
-  //   D: 4h study + 4h break
-  // After first user timer. Off 12am-6am.
-  if(style==="\uD83E\uDDD8 Zen Mode"){
-    if(!dayStarted)return{studying:false,sessionSec:0};
-    if(h<6)return{studying:false,sessionSec:0};
+  // Random cycle schedule (25% each), after first user timer. Off 12am-6am.
+  if(style==="🧘 Zen Mode"){
+    if(!dayStarted)return{studying:false};
+    if(h>=0&&h<6)return{studying:false};
     const zs=sm.zenSchedule;
-    if(!zs)return{studying:false,sessionSec:0};
+    if(!zs)return{studying:false};
     const elapsed=Math.floor((Date.now()-(sm.zenCycleStart||Date.now()))/1000);
     const pos=elapsed%((zs.study+zs.brk)*60);
-    return{studying:pos<zs.study*60,sessionSec:0};
+    return{studying:pos<zs.study*60};
   }
 
   // GRIND MODE
-  // 5h study, 2h break. All day all night, no restrictions.
-  if(style==="\uD83D\uDCAA Grind Mode"){
+  // 5h study + 2h break. All day, all night, no restrictions.
+  if(style==="💪 Grind Mode"){
     const pos=totalMin%420,studying=pos<300;
-    return{studying,sessionSec:0};
+    return{studying};
   }
 
-  return{studying:false,sessionSec:0};
+  return{studying:false};
 }
 
 
@@ -3287,7 +3390,7 @@ function smStartTick(){
     const sm=S.studymates;
     const userFocusing=S.timer.active&&(S.timer.mode==="focus"||S.timer.mode==="focus-long");
 
-    // Reset all daily state on new day
+    // ── New day reset ──
     if(sm.dayStartedDate!==_td){
       sm.dayStarted=null;
       sm.dayStartedDate=_td;
@@ -3300,20 +3403,20 @@ function smStartTick(){
       sm._prevUserFocusing=false;
     }
 
-    // Track user's FIRST focus session of the day
+    // ── Track user's FIRST focus session of the day → activates dayStart-gated mates ──
     if(userFocusing&&!sm.dayStarted){
       sm.dayStarted=Date.now();
     }
 
-    // Deep Focus stop decision
+    // ── Deep Focus: decide stop time at 11pm / midnight ──
     if(sm.dayStarted&&(!sm.dfDecision||sm.dfDecision==='pending')){
-      if(h>=23){sm.dfDecision=Math.random()<0.5?'stop11':'pending_mid';}
+      if(h===23){sm.dfDecision=Math.random()<0.5?'stop11':'pending_mid';}
     }
     if(sm.dayStarted&&sm.dfDecision==='pending_mid'&&h===0){
       sm.dfDecision=Math.random()<0.5?'stop12':'continue';
     }
 
-    // Zen Mode: initialise schedule after user starts, pick new on cycle end
+    // ── Zen Mode: pick schedule when user first starts, rotate on cycle end ──
     if(sm.dayStarted&&!sm.zenSchedule){
       const opts=[{study:60,brk:15},{study:120,brk:60},{study:300,brk:120},{study:240,brk:240}];
       sm.zenSchedule=opts[Math.floor(Math.random()*4)];
@@ -3328,19 +3431,18 @@ function smStartTick(){
       }
     }
 
-    // Lo-fi Vibes delay logic
+    // ── Lo-fi Vibes: 5min ON delay, 15min OFF delay ──
     const prevFocus=sm._prevUserFocusing||false;
     if(userFocusing&&!prevFocus){
-      // User just started: activate Lo-fi in 5 mins
+      // User just started focusing → schedule activate in 5 mins
       sm.lofiActivateAt=Date.now()+5*60*1000;
       sm.lofiDeactivateAt=null;
     }
     if(!userFocusing&&prevFocus){
-      // User just stopped: deactivate Lo-fi in 15 mins
+      // User just stopped → deactivate after 15 mins
       sm.lofiDeactivateAt=Date.now()+15*60*1000;
     }
-    // User resumed before deactivation fires: cancel it
-    if(userFocusing&&sm.lofiDeactivateAt){sm.lofiDeactivateAt=null;}
+    if(userFocusing&&sm.lofiDeactivateAt){sm.lofiDeactivateAt=null;} // user resumed before timeout
     if(!sm.lofiActive&&sm.lofiActivateAt&&Date.now()>=sm.lofiActivateAt){
       sm.lofiActive=true;sm.lofiActivateAt=null;
     }
@@ -3349,16 +3451,15 @@ function smStartTick(){
     }
     sm._prevUserFocusing=userFocusing;
 
-    // Accumulate today's study seconds per mate
+    // ── Accumulate per-mate daily seconds ──
     if(!sm.mateTodaySec)sm.mateTodaySec={};
     if(!sm.mateTodayDate)sm.mateTodayDate={};
     smGetAllMates().forEach(m=>{
-      const sched=smSchedule(m.style||"\uD83C\uDFB5 Lo-fi Vibes",now,m);
+      const sched=smSchedule(m.style||"🎵 Lo-fi Vibes",now,m);
       if(sm.mateTodayDate[m.id]!==_td){sm.mateTodaySec[m.id]=0;sm.mateTodayDate[m.id]=_td;}
       if(sched.studying)sm.mateTodaySec[m.id]=(sm.mateTodaySec[m.id]||0)+1;
     });
 
-    // Save accumulated data every 60 seconds
     _smSaveTick++;
     if(_smSaveTick>=60){save();_smSaveTick=0;}
     if(S.view==="studymates")_renderSmGrid();
@@ -3406,7 +3507,7 @@ function _renderSmGrid(){
   const cards=allEntries.map(m=>{
     if(m._isUser){
       return `<div style="background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(167,139,250,0.1));border:2px solid ${userStudying?"var(--primary)":"rgba(255,255,255,0.1)"};border-radius:16px;padding:14px 8px;text-align:center;position:relative">
-        ${userStudying?`<div class="sm-live-dot" style="position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;background:#34d399;box-shadow:0 0 6px #34d399"></div>`:""}
+        ${userStudying?`<div class="sm-live-dot" style="position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e"></div>`:""}
         <div style="font-size:38px;margin-bottom:6px">${S.profilePic?`<img src="${S.profilePic}" style="width:48px;height:48px;border-radius:50%;object-fit:cover"/>`:S.char.avatar&&S.char.avatar.startsWith("data:")?`<img src="${S.char.avatar}" style="width:48px;height:48px;border-radius:50%;object-fit:cover"/>`:S.char.avatar||"🧙‍♂️"}</div>
         <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${S.char.name||"You"} 👑</div>
         <div style="font-size:13px;font-family:monospace;color:${userStudying?"var(--primary)":"var(--text-dim)"};font-weight:700">${smFmtTime(userSec)}</div>
@@ -3414,7 +3515,7 @@ function _renderSmGrid(){
       </div>`;
     }
     return `<div class="sm-card" style="background:${m.studying?"linear-gradient(135deg,rgba(245,158,11,0.08),rgba(167,139,250,0.08))":"var(--card)"};border:2px solid ${m.studying?"var(--border-accent)":"rgba(255,255,255,0.06)"};border-radius:16px;padding:14px 8px;text-align:center;position:relative;transition:all .3s">
-      ${m.studying?`<div class="sm-live-dot" style="position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;background:#34d399;box-shadow:0 0 6px #34d399"></div>`:""}
+      ${m.studying?`<div class="sm-live-dot" style="position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e"></div>`:""}
       ${!m.builtIn?`<button onclick="App.smDeleteMate('${m.id}')" class="sm-del-btn" style="position:absolute;top:6px;left:6px;background:rgba(248,113,113,0.2);border:none;border-radius:6px;color:#f87171;font-size:10px;padding:2px 5px;cursor:pointer;opacity:0;transition:opacity .2s">✕</button>`:""}
       <div style="font-size:38px;margin-bottom:6px">${m.avatar&&m.avatar.startsWith("data:")?`<img src="${m.avatar}" style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid ${m.studying?"var(--border-accent)":"rgba(255,255,255,0.1)"}"/>`:`<span>${m.avatar||"🧙"}</span>`}</div>
       <div style="font-size:12px;font-weight:700;color:${m.studying?"var(--primary)":"var(--text)"};margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 4px">${m.name}</div>
@@ -3576,7 +3677,7 @@ function renderFlashcards(){
       <!-- Buttons — only show after flip -->
       ${flipped?`<div style="display:flex;gap:12px">
         <button onclick="App.fcMark(false)" style="flex:1;padding:14px;border-radius:12px;border:2px solid rgba(248,113,113,0.5);background:rgba(248,113,113,0.1);color:#f87171;font-size:16px;font-weight:700;cursor:pointer">❌ Missed</button>
-        <button onclick="App.fcMark(true)" style="flex:1;padding:14px;border-radius:12px;border:2px solid rgba(52,211,153,0.5);background:rgba(52,211,153,0.1);color:#34d399;font-size:16px;font-weight:700;cursor:pointer">✅ Got it</button>
+        <button onclick="App.fcMark(true)" style="flex:1;padding:14px;border-radius:12px;border:2px solid rgba(52,211,153,0.5);background:rgba(52,211,153,0.1);color:var(--accent);font-size:16px;font-weight:700;cursor:pointer">✅ Got it</button>
       </div>`:`<div style="text-align:center;color:var(--text-dim);font-size:13px;padding:10px">Tap the card to reveal the answer</div>`}`;
   }
 }
@@ -3610,7 +3711,18 @@ function renderQuickLinks(){
 }
 function renderSettings(){
   // Themes
-  document.getElementById("theme-grid").innerHTML=Object.entries(THEMES).map(([key,T])=>`<div onclick="App.setTheme('${key}')" style="padding:12px 14px;border-radius:12px;cursor:pointer;background:${S.theme===key?`${T.primary}20`:"rgba(255,255,255,.02)"};border:2px solid ${S.theme===key?T.primary:"rgba(255,255,255,.08)"};display:flex;align-items:center;gap:10px;transition:all .2s"><span style="font-size:22px">${T.icon}</span><div><div style="font-size:13px;font-weight:700;color:${T.primary}">${T.name}</div><div style="display:flex;gap:4px;margin-top:4px">${[T.primary,T.accent,T.hp,T.mp].map(c=>`<div style="width:12px;height:12px;border-radius:50%;background:${c}"></div>`).join("")}</div></div>${S.theme===key?`<span style="margin-left:auto;color:#34d399;font-size:16px">✓</span>`:""}</div>`).join("");
+  document.getElementById("theme-grid").innerHTML=Object.entries(THEMES).map(([key,T])=>{
+  const act=S.theme===key;
+  const dotColors=key==='kingsGold'?['#ffffff',T.primary,T.accent,T.hp]:[T.primary,T.accent,T.hp,T.mp];
+  const dots=dotColors.map(d=>'<div style="width:13px;height:13px;border-radius:50%;background:'+d+';box-shadow:0 0 4px '+d+'70;border:1.5px solid '+d+'cc;flex-shrink:0"></div>').join('');
+  return '<div onclick="App.setTheme(\''+key+'\')" style="padding:11px 14px;border-radius:14px;cursor:pointer;background:'+(act?T.primary+'1a':'rgba(255,255,255,.02)')+';border:2px solid '+(act?T.borderAccent:'rgba(255,255,255,.07)')+';display:flex;align-items:center;gap:12px;transition:all .25s">'
+    +'<div style="width:40px;height:40px;border-radius:10px;background:'+T.primary+'22;border:1.5px solid '+T.primary+'55;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">'+T.icon+'</div>'
+    +'<div style="flex:1"><div style="font-size:13px;font-weight:800;color:'+T.primary+';margin-bottom:5px">'+T.name+'</div>'
+    +'<div style="display:flex;gap:5px;align-items:center">'+dots+'</div></div>'
+    +(act?'<div style="width:20px;height:20px;border-radius:50%;background:'+T.primary+';display:flex;align-items:center;justify-content:center;font-size:11px;color:'+T.primaryText+';font-weight:900;flex-shrink:0">✓</div>':'')
+    +'</div>';
+}).join("");
+
   // Toggles
   const mt=document.getElementById("tog-music");mt.className=`toggle ${S.music?"on":"off"}`;
   const st=document.getElementById("tog-sfx");st.className=`toggle ${S.sfx?"on":"off"}`;
@@ -4887,7 +4999,7 @@ document.addEventListener("contextmenu",e=>e.preventDefault());
   <div id="pip-label">STUDY TIMER</div>
   <div id="pip-ring">
     <svg width="56" height="56" viewBox="0 0 56 56">
-      <circle cx="28" cy="28" r="22" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="4"/>
+      <circle cx="28" cy="28" r="22" fill="none" stroke="var(--border)" stroke-width="4"/>
       <circle id="pip-ring-arc" cx="28" cy="28" r="22" fill="none" stroke="var(--primary)" stroke-width="4"
         stroke-dasharray="138.2" stroke-dashoffset="0" stroke-linecap="round"
         style="transition:stroke-dashoffset .98s linear;filter:drop-shadow(0 0 4px var(--primary))"/>
@@ -4968,6 +5080,7 @@ document.addEventListener("contextmenu",e=>e.preventDefault());
 
     document.getElementById('pip-time').textContent=tStr;
     document.getElementById('pip-time').style.color=colVar;
+    document.getElementById('pip-time').style.textShadow=`0 0 14px ${isFocus?'var(--primary)':'var(--mp)'}, 0 0 5px ${isFocus?'var(--primary)':'var(--mp)'}`;    
     document.getElementById('pip-mode').textContent=modeLabelMap[t.mode]||'FOCUS';
     document.getElementById('pip-ring-center').textContent=t.elapsed>0?pct+'%':'';
     document.getElementById('pip-ring-center').style.color=colVar;
