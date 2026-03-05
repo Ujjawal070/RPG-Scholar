@@ -4682,7 +4682,7 @@ const App={
   },
   exportData(){
     try{
-      const key="rpg-scholar-data-"+(Auth.current()||"guest");
+      const key="rpg-scholar-data";
       const raw=localStorage.getItem(key);
       if(!raw){notify("No data to export!","error");return;}
       const blob=new Blob([raw],{type:"application/json"});
@@ -4705,7 +4705,7 @@ const App={
         const data=JSON.parse(e.target.result);
         // Validate it looks like RPG Scholar data
         if(!data.char&&!data.quests){notify("❌ Invalid save file!","error");input.value="";return;}
-        const key="rpg-scholar-data-"+(Auth.current()||"guest");
+        const key="rpg-scholar-data";
         localStorage.setItem(key,e.target.result);
         input.value="";
         notify("✅ Save imported! Reloading...");
